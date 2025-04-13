@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Help Guide</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/self_guide.css') }}">
+    <style>
+        .body {
+            background: url("{{ url_for('static', filename='images/selfhelp.jpg') }}") no-repeat center center fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-size: cover;
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 Self-Help Guide for Mental Wellness</h1>
+    </header>
+
+    <section class="category">
+        <h2>For OCD</h2>
+        <div class="cards">
+            <div class="card" onclick="showPopup('https://www.mind.org.uk/information-support/types-of-mental-health-problems/obsessive-compulsive-disorder-ocd/self-care-for-ocd/?utm_source=chatgpt.com')">Mind: Self-care for Obsessive-Compulsive Disorder (OCD)</div>
+            <div class="card" onclick="showPopup('https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/obsessive-compulsive-disorder-ocd-self-help-guide/?utm_source=chatgpt.com')">NHS Inform: Obsessive-Compulsive Disorder (OCD) Self-help Guide</div>
+            <div class="card" onclick="showPopup('https://www.ocduk.org/overcoming-ocd/self-help/?utm_source=chatgpt.com')">International OCD Foundation: Self-Directed Treatment for OCD</div>
+            <div class="card" onclick="showPopup('https://www.helpguide.org/mental-health/anxiety/obssessive-compulsive-disorder-ocd?utm_source=chatgpt.com')">Anxiety Canada: Self Help - Managing Your OCD at Home</div>
+            <div class="card" onclick="showPopup('https://www.webmd.com/mental-health/mental-tips-living-with-ocd?utm_source=chatgpt.com')">HelpGuide.org: Obsessive-Compulsive Disorder (OCD)</div>
+        </div>
+    </section>
+
+    <section class="category">
+        <h2>For Dyslexia</h2>
+        <div class="cards">
+            <div class="card" onclick="showPopup('https://www.mayoclinic.org/diseases-conditions/dyslexia/symptoms-causes/syc-20353552')">Mayo Clinic: Understanding Dyslexia - Symptoms and Causes</div>
+            <div class="card" onclick="showPopup('https://dyslexiaida.org/dyslexia-basics/')">International Dyslexia Association: Dyslexia Basics</div>
+            <div class="card" onclick="showPopup('https://www.understood.org/en/learning-thinking-differences/child-learning-disabilities/dyslexia/understanding-dyslexia')">Understood.org: What is Dyslexia?</div>
+            <div class="card" onclick="showPopup('https://www.readingrockets.org/topics/dyslexia/articles/helping-kids-dyslexia')">Reading Rockets: Helping Kids with Dyslexia</div>
+            <div class="card" onclick="showPopup('https://www.webmd.com/children/understanding-dyslexia-basics')">WebMD: Understanding Dyslexia - Basics and Support</div>
+        </div>
+    </section>
+
+    <section class="category">
+        <h2>For Anxiety</h2>
+        <div class="cards">
+            <div class="card" onclick="showPopup('https://www.helpguide.org/articles/anxiety/how-to-cope-with-anxiety.htm')">HelpGuide: How to Cope with Anxiety</div>
+            <div class="card" onclick="showPopup('https://adaa.org/understanding-anxiety/self-help')">ADAA: Self-Help for Anxiety Disorders</div>
+            <div class="card" onclick="showPopup('https://www.calm.com/blog/anxiety-playlist')">Calm: Anxiety-Busting Playlist Curated by Science</div>
+            <div class="card" onclick="showPopup('https://www.7cups.com/anxiety-help/')">7 Cups: Chat with a Listener Who Gets It</div>
+            <div class="card" onclick="showPopup('https://www.npr.org/sections/health-shots/2021/11/10/1054010348/awe-appears-to-be-awfully-beneficial')">NPR: The Science of Awe to Melt Anxiety</div>
+        </div>
+    </section>
+    <section class="category">
+        <h2>For ADHD</h2>
+        <div class="cards">
+            <div class="card" onclick="showPopup('https://chadd.org/about-adhd/overview/')">CHADD: Overview of ADHD</div>
+            <div class="card" onclick="showPopup('https://www.additudemag.com/adhd-treatment-options-care/')">ADDitude: ADHD Treatment Options</div>
+            <!-- Creative Cards -->
+            <div class="card" onclick="showPopup('https://www.howtoadhd.com/')">How to ADHD: Brain Hacks from a YouTube Guru</div>
+            <div class="card" onclick="showPopup('https://www.adhdrewired.com/podcast/')">ADHD Rewired: Podcast for the ADHD Tribe</div>
+            <div class="card" onclick="showPopup('https://totallyadd.com/adhd-comics/')">TotallyADD: Comics That Get Your ADHD Life</div>
+        </div>
+    </section>
+
+  <section class="category">
+    <h2>For Depression</h2>
+    <div class="cards">
+        <div class="card" onclick="showPopup('https://www.helpguide.org/articles/depression/coping-with-depression.htm')">HelpGuide: Coping with Depression</div>
+        <div class="card" onclick="showPopup('https://www.mind.org.uk/information-support/types-of-mental-health-problems/depression/self-care/')">Mind: Self-Care for Depression</div>
+        <!-- Creative Cards -->
+        <div class="card" onclick="showPopup('https://www.blurtitout.org/resource/depression-comics/')">Blurt: Depression Comics to Feel Seen</div>
+        <div class="card" onclick="showPopup('https://www.ted.com/playlists/270/talks_to_watch_when_you_feel_depressed')">TED: Talks to Lift You Out of the Dark</div>
+        <div class="card" onclick="showPopup('https://www.thedepressionproject.com/')">The Depression Project: Real Stories, Real Tools</div>
+    </div>
+</section>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p id="popup-text"></p>
+            <button class="close-btn" onclick="hidePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(text) {
+            document.getElementById('popup-text').innerText = text;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

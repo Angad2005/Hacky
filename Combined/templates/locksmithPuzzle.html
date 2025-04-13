@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locksmith’s Puzzle</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #eceff1;
+            font-family: Arial, sans-serif;
+        }
+        #game-container {
+            width: 600px;
+            padding: 20px;
+            background-color: #cfd8dc;
+            border: 2px solid #90a4ae;
+            border-radius: 8px;
+            margin: 20px;
+            text-align: center;
+        }
+        #lockbox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type="range"], input[type="number"] {
+            width: 200px;
+        }
+        #dial {
+            width: 100px;
+            height: 100px;
+            background: url('https://cdn-icons-png.flaticon.com/512/3485/3485029.png') no-repeat center;
+            background-size: contain;
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        #reward {
+            display: none;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        #objective {
+            font-size: 20px;
+            color: #01579b;
+            margin-bottom: 15px;
+        }
+        #message {
+            font-size: 18px;
+            color: #455a64;
+        }
+        #clue {
+            font-size: 16px;
+            color: #78909c;
+        }
+        #score {
+            font-size: 18px;
+            color: #388e3c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Locksmith’s Puzzle</h1>
+    <div id="game-container">
+        <div id="objective"></div>
+        <div id="lockbox">
+            <div class="control">
+                <label>Dial (°): <span id="dial-value">0</span></label>
+                <div id="dial" style="transform: rotate(0deg);"></div>
+            </div>
+            <div class="control">
+                <label>Slider (%): <span id="slider-value">0</span></label>
+                <input type="range" id="slider" min="0" max="100" value="0">
+            </div>
+            <div class="control">
+                <label>Buttons: <span id="button-value">0</span></label>
+                <button id="button" onclick="incrementButton()">Press</button>
+            </div>
+            <div class="control">
+                <label>Switches: <span id="switch-value">0</span>/3</label>
+                <input type="number" id="switches" min="0" max="3" value="0">
+            </div>
+        </div>
+        <div id="clue">Listen: The ticking grows louder when you’re close...</div>
+        <div id="message"></div>
+        <img id="reward" src="" alt="Serene Scene" width="500">
+        <div id="score">Score: 0</div>
+    </div>
+    <audio id="tick-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
+    <audio id="unlock-sound" src="https://www.soundjay.com/buttons/beep-07a.mp3" preload="auto"></audio>
+    <script>
+        const dial = document.getElementById('dial');
+        const dialValue = document.getElementById('dial-value');
+        const slider = document.getElementById('slider');
+        const sliderValue = document.getElementById('slider-value');
+        const buttonValue = document.getElementById('button-value');
+        const switches = document.getElementById('switches');
+        const switchValue = document.getElementById('switch-value');
+        const objective = document.getElementById('objective');
+        const message = document.getElementById('message');
+        const reward = document.getElementById('reward');
+        const scoreDisplay = document.getElementById('score');
+        const tickSound = document.getElementById('tick-sound');
+        const unlockSound = document.getElementById('unlock-sound');
+
+        let correctDial, correctSlider, correctButtons, correctSwitches;
+        let dialAngle = 0;
+        let buttonPresses = 0;
+        let score = 0;
+        const rewards = [
+            { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb", alt: "Serene Lake" },
+            { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05", alt: "Calm Forest" },
+            { src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e", alt: "Peaceful Beach" }
+        ];
+
+        function setNewObjective() {
+            correctDial = Math.floor(Math.random() * 24) * 15; // 0-345° in 15° steps
+            correctSlider = Math.floor(Math.random() * 101); // 0-100%
+            correctButtons = Math.floor(Math.random() * 4) + 1; // 1-4 presses
+            correctSwitches = Math.floor(Math.random() * 4); // 0-3 switches
+            objective.textContent = `Objective: Set Dial to ${correctDial}°, Slider to ${correctSlider}%, Buttons to ${correctButtons}, Switches to ${correctSwitches}`;
+        }
+
+        function updateTicking() {
+            const dialDiff = Math.abs(dialAngle - correctDial) / 360;
+            const sliderDiff = Math.abs(slider.value - correctSlider) / 100;
+            const buttonDiff = Math.abs(buttonPresses - correctButtons) / 4;
+            const switchDiff = Math.abs(switches.value - correctSwitches) / 3;
+            const totalDiff = (dialDiff + sliderDiff + buttonDiff + switchDiff) / 4;
+            const volume = Math.max(0, 1 - totalDiff);
+            tickSound.volume = volume;
+            tickSound.playbackRate = 1 + (1 - volume);
+            if (!tickSound.paused) tickSound.currentTime = 0;
+            tickSound.play().catch(e => console.log("Sound play failed:", e));
+        }
+
+        function checkUnlock() {
+            if (dialAngle === correctDial && 
+                parseInt(slider.value) === correctSlider && 
+                buttonPresses === correctButtons && 
+                parseInt(switches.value) === correctSwitches) {
+                message.textContent = 'Lockbox opened! Serenity awaits.';
+                const rewardIndex = Math.floor(Math.random() * rewards.length);
+                reward.src = rewards[rewardIndex].src;
+                reward.alt = rewards[rewardIndex].alt;
+                reward.style.display = 'block';
+                tickSound.pause();
+                unlockSound.volume = 0.5;
+                unlockSound.play().catch(e => console.log("Sound play failed:", e));
+                score += 10;
+                scoreDisplay.textContent = `Score: ${score}`;
+                setTimeout(resetGame, 3000);
+            }
+        }
+
+        function resetGame() {
+            dialAngle = 0;
+            dial.style.transform = `rotate(${dialAngle}deg)`;
+            dialValue.textContent = dialAngle;
+            slider.value = 0;
+            sliderValue.textContent = slider.value;
+            buttonPresses = 0;
+            buttonValue.textContent = buttonPresses;
+            switches.value = 0;
+            switchValue.textContent = switches.value;
+            message.textContent = '';
+            reward.style.display = 'none';
+            setNewObjective();
+            updateTicking();
+        }
+
+        dial.addEventListener('click', () => {
+            dialAngle = (dialAngle + 15) % 360;
+            dial.style.transform = `rotate(${dialAngle}deg)`;
+            dialValue.textContent = dialAngle;
+            updateTicking();
+            checkUnlock();
+        });
+
+        slider.addEventListener('input', () => {
+            sliderValue.textContent = slider.value;
+            updateTicking();
+            checkUnlock();
+        });
+
+        function incrementButton() {
+            if (buttonPresses < 5) {
+                buttonPresses++;
+                buttonValue.textContent = buttonPresses;
+                updateTicking();
+                checkUnlock();
+            }
+        }
+
+        switches.addEventListener('input', () => {
+            switchValue.textContent = switches.value;
+            updateTicking();
+            checkUnlock();
+        });
+
+        // Initial setup
+        setNewObjective();
+        updateTicking();
+    </script>
+</body>
+</html>

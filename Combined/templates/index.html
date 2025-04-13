@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health First - Mental Wellness</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/frontpage.css') }}" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+  .hero {
+    background: url("{{ url_for('static', filename='images/nature.jpg')}}") center/cover no-repeat;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  </style>
+</head>
+<body>
+
+  <!-- Top Contact Bar -->
+  <div class="top-bar">
+    <span>📞 1-800-1234-567 | 🏢 2130 Fulton Street, San Diego, CA | 📧 mail@healthfirst.org</span>
+  </div>
+
+  <!-- Navigation -->
+  <header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Mindtric Logo" class="logo-img-small">       Mindtric
+      </div>
+      
+      <nav>
+        <a href="#" class="active">Home</a>
+        <a href="{{ url_for('music_player') }}">Music player</a>
+      
+        <div class="dropdown" id="contentDropdown">
+          <a href="#" onclick="toggleDropdown(event)">Content ▾</a>
+          <div class="dropdown-content" id="dropdownMenu">
+            <a href="{{ url_for('self_guide') }}">Self Help Guide</a>
+            <a href="{{ url_for('books') }}">Library</a>
+          </div>
+        </div>
+        <a href="{{ url_for('games') }}">Games</a>
+        <a href="{{ url_for('about') }}">About us</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+      
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-overlay">
+      <h1>"Being challenged in life is inevitable, being defeated is optional."<br> — Roger Crawford</h1>
+    </div>
+  </section>
+
+  <!-- About Us Section -->
+  <section class="about">
+    <h2>Who We Are</h2>
+    <p>We are a team of compassionate individuals dedicated to promoting mental wellness through easy-to-use tools, guided content, and emotional support for all.</p>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services">
+    <h2>Our Core Resources</h2>
+    <div class="service-cards">
+        <div class="card">
+            <h3>📚 Books Library</h3>
+            <p>Explore top reads on mental health, healing, and personal growth.</p>
+          </div>
+          
+          
+      <div class="card">
+        <h3>📘 Self-Help Guides</h3>
+        <p>Articles and exercises to manage stress, anxiety, and more.</p>
+      </div>
+      <div class="card">
+        <h3>🎧 Relaxation Tools</h3>
+        <p>Use music, sounds, and breathing exercises to unwind anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Daily Tip Section -->
+  <section class="daily-tip">
+    <h2>🌤️ Today's Mental Health Tip</h2>
+    <p>"You don’t have to control your thoughts. You just have to stop letting them control you." — Dan Millman</p>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <h2>What Our Users Say</h2>
+    <div class="testimonial-cards">
+      <div class="testimonial">
+        <p>“This platform helped me gain confidence and better manage my anxiety.”</p>
+        <span>- Sarah M.</span>
+      </div>
+      <div class="testimonial">
+        <p>“The relaxation tools are so easy to use and helped me sleep better.”</p>
+        <span>- Jason L.</span>
+      </div>
+    </div>
+  </section>
+
+
+  <script>
+    function toggleDropdown(event) {
+      event.preventDefault();
+      const dropdown = document.getElementById("contentDropdown");
+      dropdown.classList.toggle("show");
+    }
+  
+    // Optional: Close dropdown when clicking outside
+    document.addEventListener("click", function (e) {
+      const dropdown = document.getElementById("contentDropdown");
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
+  </script>
+  
+
+</body>
+</html>

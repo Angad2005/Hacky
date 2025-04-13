@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Mindtric</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+    .about-page {
+        background: url("{{ url_for('static', filename='images/aboutbg.jpeg') }}") no-repeat center center fixed; /* Add your custom background image */
+        background-size: cover; /* Ensure the image covers the entire viewport */
+        color: var(--pine-tree); /* Ensure text color contrasts with the background */
+    }
+    </style>
+</head>
+<body class="about-page">
+    <div class="about-container">
+        <div class="about-header">
+            <h1>Welcome to Mindtric</h1>
+            <p>
+                Your safe space to unwind, relax, and recharge through the magic of mini-games. Designed to help those living 
+                with OCD, anxiety, depression, ADHD, and dyslexia, Mindtric is here to make your day a little brighter.
+            </p>
+        </div>
+        <div class="about-content">
+            <div class="about-section">
+                <h2>Our Mission</h2>
+                <p>
+                    At Mindtric, we strive to create an inclusive platform where creativity meets well-being. Our games are designed 
+                    with care to foster relaxation, reduce stress, and empower individuals to better navigate life’s challenges.
+                </p>
+            </div>
+            <div class="about-section">
+                <h2>Why Mindtric?</h2>
+                <p>
+                    Whether you're taking a break from your busy routine or looking for a tool to manage your thoughts, Mindtric’s 
+                    library of mini-games is built to engage, uplift, and focus your mind. Every game is simple yet meaningful, 
+                    catering to diverse needs with features that bring calm to your fingertips.
+                </p>
+            </div>
+            <div class="about-section">
+                <h2>Our Values</h2>
+                <p>
+                    Compassion, inclusivity, and empowerment are the heart of what we do. We believe in building a supportive 
+                    community where everyone feels heard, valued, and inspired to grow.
+                </p>
+            </div>
+        </div>
+        <div class="team-section">
+            <h2>Meet the People Behind Mindtric</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <!-- <img src="images/founder.jpg" alt="Founder" class="team-photo"> -->
+                    <h3>Anvi Gogia</h3>
+                </div>
+                <div class="team-card">
+                    <h3>Angad Singh <br>Thind</h3>
+                </div>
+                <div class="team-card">
+                    <h3>Allen P. Manoj</h3>
+                </div>
+                <div class="team-card">
+                    <h3>Daksh Yadav</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

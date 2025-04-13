@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinder’s Quest</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #f0e4d7, #d9e6e0);
+            font-family: Arial, sans-serif;
+        }
+        #content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 10px 0;
+            height: calc(100vh - 20px);
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 36px;
+            color: #3c2f2f;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+            margin: 10px 0 5px;
+        }
+        #instructions {
+            font-size: 20px;
+            color: #006064;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 5px 15px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        #progress {
+            font-size: 18px;
+            color: #ffffff;
+            background: rgba(60, 47, 47, 0.8);
+            padding: 5px 15px;
+            border-radius: 10px;
+            margin: 5px 0;
+        }
+        #game-container {
+            width: 600px;
+            height: 600px;
+            position: relative;
+            background: #f5f5f5;
+            border: 4px solid #3c2f2f;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        #maze {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: grid;
+            grid-template-columns: repeat(10, 60px);
+            grid-template-rows: repeat(10, 60px);
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .wall {
+            background: #8d5524;
+        }
+        .path {
+            background: #e0f7fa;
+            transition: background 0.3s ease;
+        }
+        .path:hover {
+            background: #b2ebf2;
+        }
+        .arrow {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            transition: transform 0.2s ease, opacity 0.3s ease;
+        }
+        .arrow:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .arrow-up { background-image: url('https://cdn-icons-png.flaticon.com/512/892/892926.png'); }
+        .arrow-right { background-image: url('https://cdn-icons-png.flaticon.com/512/892/892939.png'); }
+        .arrow-down { background-image: url('https://cdn-icons-png.flaticon.com/512/892/892933.png'); }
+        .arrow-left { background-image: url('https://cdn-icons-png.flaticon.com/512/892/892947.png'); }
+        #player {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn-icons-png.flaticon.com/512/3095/3095040.png') no-repeat center;
+            background-size: contain;
+            transition: top 0.3s ease, left 0.3s ease;
+            z-index: 10;
+        }
+        .obstacle {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn-icons-png.flaticon.com/512/1888/1888752.png') no-repeat center;
+            background-size: contain;
+            transition: top 0.5s ease, left 0.5s ease;
+        }
+        #goal {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: url('https://cdn-icons-png.flaticon.com/512/597/597177.png') no-repeat center;
+            background-size: contain;
+        }
+        #story-panel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #story-image {
+            width: 400px;
+            height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        #ui-panel {
+            display: flex;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        button {
+            font-size: 16px;
+            padding: 8px 20px;
+            background: #006064;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background: #00838f;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Pathfinder’s Quest</h1>
+        <div id="instructions">Click arrows or use keys to reach the goal!</div>
+        <div id="progress">Progress: 0/3</div>
+        <div id="game-container">
+            <div id="maze"></div>
+            <div id="player"></div>
+            <div id="goal"></div>
+            <div id="story-panel">
+                <img id="story-image" src="" alt="Story Piece">
+            </div>
+        </div>
+        <div id="ui-panel">
+            <button onclick="startGame()">Restart Quest</button>
+        </div>
+    </div>
+    <audio id="move-sound" src="https://www.soundjay.com/buttons/beep-07a.mp3" preload="auto"></audio>
+    <audio id="hit-sound" src="https://www.soundjay.com/buttons/beep-02.mp3" preload="auto"></audio>
+    <audio id="story-sound" src="https://www.soundjay.com/nature/ocean-wave-1.mp3" preload="auto"></audio>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const maze = document.getElementById('maze');
+        const player = document.getElementById('player');
+        const goal = document.getElementById('goal');
+        const storyPanel = document.getElementById('story-panel');
+        const storyImage = document.getElementById('story-image');
+        const progress = document.getElementById('progress');
+        const moveSound = document.getElementById('move-sound');
+        const hitSound = document.getElementById('hit-sound');
+        const storySound = document.getElementById('story-sound');
+        
+        const gridSize = 10;
+        const cellSize = 60;
+        const totalCells = gridSize * gridSize;
+        const minWalls = Math.floor(totalCells * 0.6); // At least 60% walls
+        let playerPos = { x: 0, y: 0 };
+        let obstaclePositions = [];
+        let goalPos = { x: 9, y: 9 };
+        const directions = [
+            { symbol: 'arrow-up', dx: 0, dy: -1, narration: "Move up toward the sun" },
+            { symbol: 'arrow-right', dx: 1, dy: 0, narration: "Head right to the horizon" },
+            { symbol: 'arrow-down', dx: 0, dy: 1, narration: "Go down to the valley" },
+            { symbol: 'arrow-left', dx: -1, dy: 0, narration: "Turn left to the river" }
+        ];
+        const storyPieces = [
+            { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb", alt: "A serene lake" },
+            { src: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05", alt: "A lush forest" },
+            { src: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e", alt: "A peaceful beach" }
+        ];
+        let currentLevel = 0;
+
+        function generateMaze() {
+            maze.innerHTML = '';
+            const pathCells = new Set();
+            let current = { x: 0, y: 0 };
+            pathCells.add(`${current.x},${current.y}`);
+
+            // Generate a path to the goal
+            while (current.x !== goalPos.x || current.y !== goalPos.y) {
+                const possibleMoves = directions.filter(dir => {
+                    const newX = current.x + dir.dx;
+                    const newY = current.y + dir.dy;
+                    return newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize;
+                });
+                const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                current.x += move.dx;
+                current.y += move.dy;
+                pathCells.add(`${current.x},${current.y}`);
+            }
+
+            // Ensure at least 60% walls
+            const wallCells = new Set();
+            while (wallCells.size + pathCells.size < totalCells) {
+                const x = Math.floor(Math.random() * gridSize);
+                const y = Math.floor(Math.random() * gridSize);
+                const key = `${x},${y}`;
+                if (!pathCells.has(key) && !(x === goalPos.x && y === goalPos.y)) {
+                    wallCells.add(key);
+                }
+            }
+            while (wallCells.size < minWalls) {
+                const x = Math.floor(Math.random() * gridSize);
+                const y = Math.floor(Math.random() * gridSize);
+                const key = `${x},${y}`;
+                if (!pathCells.has(key) && !(x === goalPos.x && y === goalPos.y)) {
+                    wallCells.add(key);
+                }
+            }
+
+            // Place obstacles (3 instead of 1)
+            obstaclePositions = [];
+            for (let i = 0; i < 3; i++) {
+                let obsX, obsY;
+                do {
+                    obsX = Math.floor(Math.random() * gridSize);
+                    obsY = Math.floor(Math.random() * gridSize);
+                } while (pathCells.has(`${obsX},${obsY}`) || (obsX === goalPos.x && obsY === goalPos.y) || 
+                         (obsX === playerPos.x && obsY === playerPos.y) || 
+                         obstaclePositions.some(pos => pos.x === obsX && pos.y === obsY));
+                obstaclePositions.push({ x: obsX, y: obsY });
+            }
+
+            // Render maze
+            for (let y = 0; y < gridSize; y++) {
+                for (let x = 0; x < gridSize; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    const key = `${x},${y}`;
+                    if (pathCells.has(key)) {
+                        cell.classList.add('path');
+                        if (x === playerPos.x && y === playerPos.y) {
+                            // Player starts here
+                        } else if (x === goalPos.x && y === goalPos.y) {
+                            // Goal here
+                        } else if (obstaclePositions.some(pos => pos.x === x && pos.y === y)) {
+                            // Obstacle here
+                        } else {
+                            const dir = directions[Math.floor(Math.random() * directions.length)];
+                            const arrow = document.createElement('div');
+                            arrow.classList.add('arrow', dir.symbol);
+                            arrow.addEventListener('click', () => movePlayer(dir.dx, dir.dy));
+                            cell.appendChild(arrow);
+                        }
+                    } else {
+                        cell.classList.add('wall');
+                    }
+                    maze.appendChild(cell);
+                }
+            }
+
+            // Add obstacles to DOM
+            obstaclePositions.forEach((pos, index) => {
+                const obstacle = document.createElement('div');
+                obstacle.classList.add('obstacle');
+                obstacle.id = `obstacle-${index}`;
+                gameContainer.appendChild(obstacle);
+            });
+
+            updatePositions();
+        }
+
+        function updatePositions() {
+            player.style.left = `${playerPos.x * cellSize + 10}px`;
+            player.style.top = `${playerPos.y * cellSize + 10}px`;
+            obstaclePositions.forEach((pos, index) => {
+                const obstacle = document.getElementById(`obstacle-${index}`);
+                obstacle.style.left = `${pos.x * cellSize + 10}px`;
+                obstacle.style.top = `${pos.y * cellSize + 10}px`;
+            });
+            goal.style.left = `${goalPos.x * cellSize + 10}px`;
+            goal.style.top = `${goalPos.y * cellSize + 10}px`;
+        }
+
+        function movePlayer(dx, dy) {
+            const newX = playerPos.x + dx;
+            const newY = playerPos.y + dy;
+            if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
+                const cellIndex = newY * gridSize + newX;
+                const cell = maze.children[cellIndex];
+                if (cell.classList.contains('path')) {
+                    if (obstaclePositions.some(pos => pos.x === newX && pos.y === newY)) {
+                        speak("Watch out! You hit a rock.");
+                        hitSound.currentTime = 0;
+                        hitSound.volume = 0.5;
+                        hitSound.play().catch(e => console.log("Hit sound failed:", e));
+                        return;
+                    }
+                    playerPos.x = newX;
+                    playerPos.y = newY;
+                    updatePositions();
+                    moveSound.currentTime = 0;
+                    moveSound.volume = 0.3;
+                    moveSound.play().catch(e => console.log("Move sound failed:", e));
+
+                    const arrow = cell.querySelector('.arrow');
+                    if (arrow) {
+                        const dir = directions.find(d => arrow.classList.contains(d.symbol));
+                        speak(dir.narration);
+                    }
+
+                    if (newX === goalPos.x && newY === goalPos.y) {
+                        completeLevel();
+                    }
+                    moveObstacles();
+                }
+            }
+        }
+
+        function moveObstacles() {
+            obstaclePositions.forEach((pos, index) => {
+                const possibleMoves = directions.filter(dir => {
+                    const newX = pos.x + dir.dx;
+                    const newY = pos.y + dir.dy;
+                    return newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize && 
+                           !(newX === playerPos.x && newY === playerPos.y) && 
+                           !(newX === goalPos.x && newY === goalPos.y) && 
+                           !obstaclePositions.some(p => p !== pos && p.x === newX && p.y === newY);
+                });
+                if (possibleMoves.length > 0 && Math.random() < 0.2) { // 20% chance to move
+                    const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    pos.x += move.dx;
+                    pos.y += move.dy;
+                }
+            });
+            updatePositions();
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.volume = 0.7;
+            utterance.rate = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function completeLevel() {
+            storyPanel.style.display = 'flex';
+            const piece = storyPieces[currentLevel % storyPieces.length];
+            storyImage.src = piece.src;
+            storyImage.alt = piece.alt;
+            storySound.volume = 0.4;
+            storySound.play().catch(e => console.log("Story sound failed:", e));
+            speak("Great job! The story unfolds.");
+            currentLevel++;
+            progress.textContent = `Progress: ${currentLevel}/3`;
+            setTimeout(() => {
+                storyPanel.style.display = 'none';
+                startGame();
+            }, 3000);
+        }
+
+        function handleKeyPress(event) {
+            switch (event.key) {
+                case 'ArrowUp': movePlayer(0, -1); break;
+                case 'ArrowRight': movePlayer(1, 0); break;
+                case 'ArrowDown': movePlayer(0, 1); break;
+                case 'ArrowLeft': movePlayer(-1, 0); break;
+            }
+        }
+
+        function startGame() {
+            playerPos = { x: 0, y: 0 };
+            goalPos = { x: 9, y: 9 };
+            // Clear previous obstacles
+            document.querySelectorAll('.obstacle').forEach(obs => obs.remove());
+            generateMaze();
+            progress.textContent = `Progress: ${currentLevel}/3`;
+            speak("Follow the arrows to reach the goal!");
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', handleKeyPress);
+
+        // Start the game
+        startGame();
+    </script>
+</body>
+</html>

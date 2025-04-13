@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ritual Reset</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #e8f5e9;
+            font-family: Arial, sans-serif;
+        }
+        #game-container {
+            width: 800px;
+            height: 600px;
+            position: relative;
+            background-color: #f1f8e9;
+            border: 2px solid #81c784;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #ritual-area {
+            text-align: center;
+        }
+        .ritual-item {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .ritual-item:hover {
+            transform: scale(1.1);
+        }
+        .completed {
+            opacity: 0.5;
+            cursor: default;
+        }
+        #instructions {
+            font-size: 20px;
+            color: #2e7d32;
+            margin: 10px 0;
+        }
+        #message {
+            font-size: 18px;
+            color: #388e3c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ritual Reset</h1>
+    <div id="instructions">Perform the rituals in order: Light Candle, Pour Water, Arrange Flowers</div>
+    <div id="game-container">
+        <div id="ritual-area">
+            <img id="candle" class="ritual-item" src="https://cdn-icons-png.flaticon.com/512/2997/2997798.png" alt="Candle">
+            <img id="water" class="ritual-item" src="https://cdn-icons-png.flaticon.com/512/3037/3037799.png" alt="Water">
+            <img id="flowers" class="ritual-item" src="https://cdn-icons-png.flaticon.com/512/2909/2909775.png" alt="Flowers">
+        </div>
+    </div>
+    <div id="message"></div>
+    <script>
+        const candle = document.getElementById('candle');
+        const water = document.getElementById('water');
+        const flowers = document.getElementById('flowers');
+        const message = document.getElementById('message');
+        const ritualOrder = ['candle', 'water', 'flowers'];
+        let currentStep = 0;
+
+        function resetGame() {
+            currentStep = 0;
+            message.textContent = '';
+            [candle, water, flowers].forEach(item => {
+                item.classList.remove('completed');
+            });
+        }
+
+        function checkRitual(itemId, item) {
+            if (ritualOrder[currentStep] === itemId) {
+                item.classList.add('completed');
+                currentStep++;
+                
+                if (currentStep === ritualOrder.length) {
+                    message.textContent = 'Space reset complete! Feel the calm wash over you.';
+                    setTimeout(resetGame, 2000);
+                } else {
+                    message.textContent = `Step ${currentStep} completed. Next: ${ritualOrder[currentStep].replace(/^\w/, c => c.toUpperCase())}`;
+                }
+            } else {
+                message.textContent = 'Oops, wrong order. Start again.';
+                setTimeout(resetGame, 1000);
+            }
+        }
+
+        candle.addEventListener('click', () => {
+            if (!candle.classList.contains('completed')) {
+                checkRitual('candle', candle);
+            }
+        });
+
+        water.addEventListener('click', () => {
+            if (!water.classList.contains('completed')) {
+                checkRitual('water', water);
+            }
+        });
+
+        flowers.addEventListener('click', () => {
+            if (!flowers.classList.contains('completed')) {
+                checkRitual('flowers', flowers);
+            }
+        });
+
+        // Initial message
+        message.textContent = 'Begin with: Light Candle';
+    </script>
+</body>
+</html>

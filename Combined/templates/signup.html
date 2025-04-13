@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url("{{ url_for('static', filename='images/bglogin.jpg') }}") no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .signup-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 2rem;
+      width: 350px;
+      color: white;
+      position: relative;
+    }
+
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .signup-container input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.4rem 0;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      background: transparent;
+      color: white;
+      outline: none;
+    }
+
+    .signup-container label {
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+
+    .signup-container button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #0d1b2a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .signup-container button:hover {
+      background-color: #1a2c4c;
+    }
+
+    .terms {
+      font-size: 0.7rem;
+      margin-top: 0.5rem;
+      color: #ccc;
+      text-align: center;
+    }
+
+    .terms a {
+      color: #a3c9ff;
+      text-decoration: none;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .login-link a {
+      color: #a3c9ff;
+      text-decoration: none;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="signup-container">
+    <h2>Join Us</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="POST">
+      <label for="firstname">First Name</label>
+      <input type="text" id="firstname" name="firstname" placeholder="Enter your first name" required/>
+
+      <label for="lastname">Last Name</label>
+      <input type="text" id="lastname" name="lastname" placeholder="Enter your last name" required/>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required/>
+
+      <label for="password">Password (6+ characters)</label>
+      <input type="password" id="password" name="password" placeholder="Create a password" required/>
+
+      <div class="terms">
+        By clicking Join now, you agree to our 
+        <a href="#">User Agreement</a>, 
+        <a href="#">Privacy Policy</a>, and 
+        <a href="#">Cookie Policy</a>.
+      </div>
+
+      <button type="submit">Join now</button>
+
+      <div class="login-link">
+        Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

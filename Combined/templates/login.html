@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url("{{ url_for('static', filename='images/bglogin.jpg') }}") no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 2rem;
+      width: 350px;
+      color: #222;
+      position: relative;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #222;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-bottom: 2px solid #aaa;
+      background: transparent;
+      color: #222;
+      outline: none;
+    }
+
+    .login-container input::placeholder {
+      color: darkslategray;
+    }
+
+    .login-container label {
+      font-size: 0.9rem;
+      color: black;
+    }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .remember-forgot label {
+      color: #444;
+      align-items: center;
+    }
+
+    .remember-forgot a {
+      color: #003366;
+      text-decoration: none;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-container button:hover {
+      background-color: black;
+    }
+
+    .register {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: black;
+    }
+
+    .register a {
+      color: black;
+      text-decoration: none;
+    }
+
+    /* .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #222;
+    } */
+
+    nav {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    nav ul li a {
+      color: #222;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .nav-login {
+      border: 1px solid #222;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+    }
+
+    .logo h2 {
+      color: #222;
+    }
+
+    .message {
+      text-align: center;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+    }
+    .error { background-color: #ffe6e6; color: #cc0000; }
+    .success { background-color: #e6ffe6; color: #006600; }
+  </style>
+</head>
+<body>
+  <nav>
+    <!-- <div class="logo"><h2>Logo</h2></div> -->
+    <img src="{{ url_for('static', filename='images/minetriclogo.png') }}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;" alt="Mindtric Logo" class="logo">
+
+    <ul>
+      <li><a href="{{ url_for('index') }}">Home</a></li>
+      <li><a href="{{ url_for('about') }}">About Us</a></li>
+      <li><a href="{{ url_for('signup') }}" class="nav-login">Signup</a></li>
+    </ul>
+  </nav>
+
+  <div class="login-container">
+    <!-- <div class="close-btn">&times;</div> -->
+    <h2>Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form method="POST">
+      <label for="email"><b>Email</b></label>
+      <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+      <label for="password"><b>Password</b></label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+      <div class="remember-forgot">
+        <label><input type="checkbox" name="remember" id="remember"> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="register">
+      <p><b>Don't have an account?</b> <a href="{{ url_for('signup') }}"><i><b>Signup</b></i></a>
+    </div>
+  </div>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9268a0db38c5bca2',t:'MTc0MzAxMjg3My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
