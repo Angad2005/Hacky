@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Therapeutic Play Hub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+            margin: 0;
+            padding: 20px;
+        }
+        /* Beautified Header Styling with Matching Background */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(to bottom, rgba(224, 247, 250, 0.8), rgba(178, 235, 242, 0.8));
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+            animation: ripple 8s infinite ease-in-out;
+            z-index: 0;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+        .header h1 {
+            font-family: 'Georgia', serif;
+            font-size: 48px;
+            color: #ffffff;
+            background: linear-gradient(90deg, #4a90e2, #9013fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: slideIn 1.5s ease-out;
+        }
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        /* Scrollbar styling */
+        .scroll-1::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .scroll-1::-webkit-scrollbar-thumb {
+            border-radius: 20px;
+            background: #888;
+        }
+        /* Container and card styling */
+        .container * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            color: #fff;
+        }
+        .container {
+            display: flex;
+            overflow-x: scroll;
+            padding: 24px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
+            scroll-snap-type: x mandatory;
+            scroll-padding-top: 24px;
+            border-radius: 8px;
+            gap: 20px;
+        }
+        .container .card {
+            flex: 0 0 250px;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #141414;
+            scroll-snap-align: start;
+            transition: transform 0.3s ease-in-out;
+        }
+        .container .card:hover {
+            transform: scale(1.05);
+        }
+        .card .card__image {
+            flex: 1;
+            height: 140px;
+            background-size: cover;
+            animation: pulse 4s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        .card .card__content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+        }
+        .card .card__content .card__title {
+            font-size: 24px;
+            color: #fff;
+            text-transform: capitalize;
+        }
+        .card .card__content .card__describe {
+            color: #fff;
+            font-size: 14px;
+        }
+        /* Category Title */
+        .category-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffffff;
+            background: linear-gradient(90deg, #4a90e2, #9013fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            margin: 30px 0 10px;
+            padding: 5px 20px;
+            display: inline-block;
+            position: relative;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        /* Descriptive Text */
+        .category-description {
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.5;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Therapeutic Play Hub</h1>
+    </div>
+    <div><a href="{% url 'inder' %}">🏠 Home</div>
+
+    <!-- OCD Category -->
+    <div class="category-title">OCD</div>
+    <div class="category-description">Interactive games to help manage intrusive thoughts and promote calm focus.</div>
+    <div class="container scroll-1">
+        <div class="card" onclick="window.location.href='{% url 'Shells' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
+            <div class="card__content">
+                <span class="card__title">Click10-Shells</span>
+                <p class="card__describe">Arrange orbiting dots into perfect symmetry.</p>
+            </div>
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Lock' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80deea, #4fc3f7);"></div>
+            <div class="card__content">
+                <span class="card__title">Locksmith-Puzzle</span>
+                <p class="card__describe">Swipe away intrusive thoughts as clouds.</p>
+            </div>
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Reset' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #ce93d8, #ba68c8, #ab47bc);"></div>
+            <div class="card__content">
+                <span class="card__title">Ritual-Reset</span>
+                <p class="card__describe">Tap to disrupt repeating patterns.</p>
+            </div>
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Sym' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c5cae9, #9fa8da, #7986cb);"></div>
+            <div class="card__content">
+                <span class="card__title">Symmetry-Sketch</span>
+                <p class="card__describe">Align tilting objects mindfully.</p>
+            </div>
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'needle' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
+            <div class="card__content">
+                <span class="card__title">Thread-The-Needle</span>
+                <p class="card__describe">Count breaths to stop looping thoughts.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dyslexia Category -->
+    <div class="category-title">Dyslexia</div>
+    <div class="category-description">Fun activities to improve reading skills and boost confidence.</div>
+    <div class="container scroll-1">
+        <div class="card" onclick="window.location.href='{% url 'Finder' %}'" style="cursor: pointer;">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #fff9c4, #fff59d, #fff176);"></div>
+            <div class="card__content">
+                <span class="card__title">Path-Finder-Quest</span>
+                <p class="card__describe">Match floating letters to form words.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #ffecb3, #ffe082, #ffd54f);"></div>
+            <div class="card__content">
+                <span class="card__title">Letter Flip</span>
+                <p class="card__describe">Flip scrambled tiles to read correctly.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80cbc4, #4db6ac);"></div>
+            <div class="card__content">
+                <span class="card__title">Sound Match</span>
+                <p class="card__describe">Pair sounds with visuals.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
+            <div class="card__content">
+                <span class="card__title">Clear Path</span>
+                <p class="card__describe">Guide a ball through readable mazes.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
+            <div class="card__content">
+                <span class="card__title">Focus Frame</span>
+                <p class="card__describe">Highlight text one word at a time.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Anxiety Category -->
+    <div class="category-title">Anxiety</div>
+    <div class="category-description">Soothing games to ease worries and teach relaxation techniques.</div>
+    <div class="container scroll-1">
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
+            <div class="card__content">
+                <span class="card__title">Breath Bubble</span>
+                <p class="card__describe">Inflate a bubble with deep breaths.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
+            <div class="card__content">
+                <span class="card__title">Worry Wave</span>
+                <p class="card__describe">Dissolve worries into the sea.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
+            <div class="card__content">
+                <span class="card__title">Calm Garden</span>
+                <p class="card__describe">Plant flowers to reframe thoughts.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
+            <div class="card__content">
+                <span class="card__title">Safe Space</span>
+                <p class="card__describe">Build a cozy virtual room.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
+            <div class="card__content">
+                <span class="card__title">Mindful Maze</span>
+                <p class="card__describe">Navigate with slow breathing.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Depression Category -->
+    <div class="category-title">Depression</div>
+    <div class="category-description">Uplifting challenges to inspire hope and small victories.</div>
+    <div class="container scroll-1">
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #d1c4e9, #b39ddb, #9575cd);"></div>
+            <div class="card__content">
+                <span class="card__title">Light Lantern</span>
+                <p class="card__describe">Illuminate dark paths.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
+            <div class="card__content">
+                <span class="card__title">Joy Jar</span>
+                <p class="card__describe">Fill a jar with positive prompts.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
+            <div class="card__content">
+                <span class="card__title">Step Stones</span>
+                <p class="card__describe">Cross a river with small wins.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #d1c4e9, #b39ddb, #9575cd);"></div>
+            <div class="card__content">
+                <span class="card__title">Mood Melody</span>
+                <p class="card__describe">Create a soothing tune.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
+            <div class="card__content">
+                <span class="card__title">Cloud Clear</span>
+                <p class="card__describe">Swipe away gray clouds.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stress Category -->
+    <div class="category-title">Stress</div>
+    <div class="category-description">Calming exercises to release tension and restore balance.</div>
+    <div class="container scroll-1">
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
+            <div class="card__content">
+                <span class="card__title">Zen Stones</span>
+                <p class="card__describe">Stack rocks mindfully.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
+            <div class="card__content">
+                <span class="card__title">Ripple Drop</span>
+                <p class="card__describe">Drop pebbles to calm water.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
+            <div class="card__content">
+                <span class="card__title">Tension Tangle</span>
+                <p class="card__describe">Untangle knotted lines.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
+            <div class="card__content">
+                <span class="card__title">Pulse Pause</span>
+                <p class="card__describe">Match heartbeat to calm rhythm.</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
+            <div class="card__content">
+                <span class="card__title">Harmony Hues</span>
+                <p class="card__describe">Paint with relaxing colors.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
