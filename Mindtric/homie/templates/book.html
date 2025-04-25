@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+    <link rel="stylesheet" type="text/css" href="#">
+    
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #dff9fb, #c7ecee);
+        }
+
+        h1 {
+            text-align: center;
+            color: #130f40;
+            margin: 20px 0;
+            font-size: 2em;
+        }
+
+        .bookshelf-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .shelf {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 4px solid #95afc0;
+            justify-content: center;
+        }
+
+        .book {
+            width: 80px; /* Width of the book spine */
+            height: 220px; /* Height of the book spine */
+            background: linear-gradient(to bottom, #6c5ce7, #74b9ff);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.4);
+            overflow: hidden; /* Prevents text from overflowing the book spine */
+            padding: 5px; /* Adds padding to prevent text from touching edges */
+            word-break: break-word; /* Breaks long words to fit within the spine */
+        }
+
+        .book span {
+            transform: rotate(90deg); /* Rotates the text by 90 degrees */
+            display: inline-block; /* Ensures the rotation applies only to the text */
+        }
+
+        .book:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Popup styling */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            width: 350px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .popup-content img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .close-btn {
+            margin-top: 15px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background-color: #5a4fcf;
+        }
+
+        /* Ensure the link stays within the popup */
+        .popup-content p {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #130f40;
+        }
+
+        .popup-content a {
+            color: #6c5ce7;
+            text-decoration: none;
+            word-break: break-word;
+        }
+
+        .popup-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="main-page">
+    <nav class="navbar">
+        
+
+        <ul class="nav-menu">
+            <li><a href="{% url 'Team' %}">About Us</a></li>
+            <li><a href="{% url 'games_index' %}">Games</a></li>
+            <li><a href="{% url 'Book' %}">Content</a></li>
+            <li><a href="{% url 'Music' %}">Music Player</a></li>
+            <!-- <li><a href="#">Logout</a></li> Changed from Login to Logout -->
+        </ul>
+        <div>
+            <!-- Removed the Login button since we're showing Logout in the nav-menu -->
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </div>
+    </nav>
+    <h1>Book-Shelf</h1>
+    <div class="bookshelf-container">
+        <h2>OCD</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('Obsessive-Compulsive Disorder: Advances in Diagnosis and Treatment', 'https://jamanetwork.com/journals/jama/fullarticle/2614194')">Advances in Diagnosis and Treatment</div>
+            <div class="book" onclick="openPopup('Understanding OCD', 'https://www.nimh.nih.gov/health/topics/obsessive-compulsive-disorder-ocd')">Understanding OCD</div>
+            <div class="book" onclick="openPopup('Our Favorite OCD Articles', 'https://www.treatmyocd.com/blog/our-favorite-ocd-articles-of-2023')">Our Favorite OCD Articles</div>
+        </div>
+        <h2>ADHD</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('ADHD Articles - CDC', 'https://www.cdc.gov/adhd/articles/index.html')">ADHD Articles - CDC</div>
+            <div class="book" onclick="openPopup('Best ADHD Articles', 'https://www.additudemag.com/best-of-2021-adhd-articles/')">Best ADHD Articles</div>
+            <div class="book" onclick="openPopup('ADHD in Adulthood', 'https://www.apa.org/monitor/2023/03/adult-adhd-diagnosis')">ADHD in Adulthood</div>
+        </div>
+        <h2>ANXIETY</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('Anxiety: What It Is', 'https://www.health.harvard.edu/blog/anxiety-what-it-is-what-to-do-2018060113955')">Anxiety: What It Is</div>
+            <div class="book" onclick="openPopup('Anxiety Overview', 'https://www.medicalnewstoday.com/articles/323454')">Anxiety Overview</div>
+            <div class="book" onclick="openPopup('Anxiety Disorders - WHO', 'https://www.who.int/news-room/fact-sheets/detail/anxiety-disorders')">Anxiety Disorders - WHO</div>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <h2 id="popup-title"></h2>
+            <p id="popup-link"></p>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openPopup(title, link) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-link').innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
