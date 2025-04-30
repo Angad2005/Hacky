@@ -13,23 +13,53 @@ def about(request):
 def games_index(request):
     return render(request, 'gamesindex.html')
 
-def shells(request):
+def Shells(request):
     return render(request, 'click10shells.html')
 
-def lock(request):
+def wordpuzzle(request):
+    return render(request, 'wordpuzzle.html')
+
+def Lock(request):
     return render(request, 'locksmithPuzzle.html')
 
-def finder(request):
+def Finder(request):
     return render(request, 'pathfindersquest.html')
 
-def reset(request):
+def Reset(request):
     return render(request, 'ritualreset.html')
 
-def sym(request):
+def Sym(request):
     return render(request, 'symmetrysketch.html')
 
 def needle(request):
     return render(request, 'threadtheneedle.html')
+
+def wordbuilder(request):
+    return render(request, 'wordbuilder.html')
+
+def symphony(request):
+    return render(request, 'symphony.html')
+
+def voyager(request):
+    return render(request, 'voyager.html')
+
+def memmatch(request):
+    return render(request, 'memmatch.html')
+
+def zengarden(request):
+    return render(request, 'zen.html')
+
+def breath(request):
+    return render(request, 'breath.html')
+
+def soundscape(request):
+    return render(request, 'soundscape.html')
+
+def gentlepuzzle(request):
+    return render(request, 'gentlepuzzle.html')
+
+def jigsaw(request):
+    return render(request, 'jigsaw.html')
 
 def Team(request):
     return render(request, 'about2.html')

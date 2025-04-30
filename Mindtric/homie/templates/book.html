@@ -136,36 +136,38 @@
         
 
         <ul class="nav-menu">
-            <li><a href="{% url 'inder' %}">Home</a></li>
             <li><a href="{% url 'Team' %}">About Us</a></li>
             <li><a href="{% url 'games_index' %}">Games</a></li>
-            
+            <li><a href="{% url 'Book' %}">Content</a></li>
             <li><a href="{% url 'Music' %}">Music Player</a></li>
             <!-- <li><a href="#">Logout</a></li> Changed from Login to Logout -->
         </ul>
         <div>
-            
+            <!-- Removed the Login button since we're showing Logout in the nav-menu -->
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
         </div>
     </nav>
     <h1>Book-Shelf</h1>
     <div class="bookshelf-container">
         <h2>OCD</h2>
         <div class="shelf">
-            <div class="book" onclick="window.location.href='https://jamanetwork.com/journals/jama/fullarticle/2614194'">Advances in Diagnosis and Treatment</div>
-            <div class="book" onclick="window.location.href='https://www.nimh.nih.gov/health/topics/obsessive-compulsive-disorder-ocd'">Understanding OCD</div>
-<div class="book" onclick="window.location.href='https://www.treatmyocd.com/blog/our-favorite-ocd-articles-of-2023'">Our Favorite OCD Articles</div>
+            <div class="book" onclick="openPopup('Obsessive-Compulsive Disorder: Advances in Diagnosis and Treatment', 'https://jamanetwork.com/journals/jama/fullarticle/2614194')">Advances in Diagnosis and Treatment</div>
+            <div class="book" onclick="openPopup('Understanding OCD', 'https://www.nimh.nih.gov/health/topics/obsessive-compulsive-disorder-ocd')">Understanding OCD</div>
+            <div class="book" onclick="openPopup('Our Favorite OCD Articles', 'https://www.treatmyocd.com/blog/our-favorite-ocd-articles-of-2023')">Our Favorite OCD Articles</div>
         </div>
         <h2>ADHD</h2>
         <div class="shelf">
-            <div class="book" onclick="window.location.href='https://www.cdc.gov/adhd/articles/index.html'">ADHD Articles - CDC</div>
-<div class="book" onclick="window.location.href='https://www.additudemag.com/best-of-2021-adhd-articles/'">Best ADHD Articles</div>
-<div class="book" onclick="window.location.href='https://www.apa.org/monitor/2023/03/adult-adhd-diagnosis'">ADHD in Adulthood</div>
+            <div class="book" onclick="openPopup('ADHD Articles - CDC', 'https://www.cdc.gov/adhd/articles/index.html')">ADHD Articles - CDC</div>
+            <div class="book" onclick="openPopup('Best ADHD Articles', 'https://www.additudemag.com/best-of-2021-adhd-articles/')">Best ADHD Articles</div>
+            <div class="book" onclick="openPopup('ADHD in Adulthood', 'https://www.apa.org/monitor/2023/03/adult-adhd-diagnosis')">ADHD in Adulthood</div>
         </div>
         <h2>ANXIETY</h2>
         <div class="shelf">
-            <div class="book" onclick="window.location.href='https://www.health.harvard.edu/blog/anxiety-what-it-is-what-to-do-2018060113955'">Anxiety: What It Is</div>
-<div class="book" onclick="window.location.href='https://www.medicalnewstoday.com/articles/323454'">Anxiety Overview</div>
-<div class="book" onclick="window.location.href='https://www.who.int/news-room/fact-sheets/detail/anxiety-disorders'">Anxiety Disorders - WHO</div>
+            <div class="book" onclick="openPopup('Anxiety: What It Is', 'https://www.health.harvard.edu/blog/anxiety-what-it-is-what-to-do-2018060113955')">Anxiety: What It Is</div>
+            <div class="book" onclick="openPopup('Anxiety Overview', 'https://www.medicalnewstoday.com/articles/323454')">Anxiety Overview</div>
+            <div class="book" onclick="openPopup('Anxiety Disorders - WHO', 'https://www.who.int/news-room/fact-sheets/detail/anxiety-disorders')">Anxiety Disorders - WHO</div>
         </div>
     </div>
 

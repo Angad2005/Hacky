@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memory Match: Sounds & Symbols</title>
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            background: #f0e8d0;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        .game-container {
+            background: #fff9ec;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 95%;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .memory-card {
+            background: #3498db;
+            border-radius: 12px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            user-select: none;
+        }
+
+        .memory-card.flipped {
+            background: #27ae60;
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched {
+            background: #f1c40f;
+            cursor: default;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .stats {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .card-set-selector {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-back {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Memory Match: Sounds & Symbols 🎵</h1>
+        <div class="card-set-selector">
+            <button onclick="loadCardSet('basic')">Basic Sounds</button>
+            <button onclick="loadCardSet('advanced')">Advanced Sounds</button>
+        </div>
+        <div class="stats">
+            Attempts: <span id="attemptCount">0</span> | 
+            Matches: <span id="matchCount">0</span>
+        </div>
+        <div class="card-grid" id="cardGrid"></div>
+        <div class="controls">
+            <button onclick="resetGame()">🔄 Reset Game</button>
+            <button onclick="speakInstructions()">🔊 Help</button>
+            <button onclick="showHowToPlay()">❔ How to Play</button>
+        </div>
+    </div>
+    <!-- How to Play Modal -->
+    <div id="howToPlayModal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(44,62,80,0.7);">
+        <div style="background:#fff9ec; color:#222; font-family:'OpenDyslexic',Arial,sans-serif; max-width:400px; margin:8vh auto; padding:2rem 2rem 1.5rem 2rem; border-radius:18px; box-shadow:0 4px 24px rgba(0,0,0,0.18); position:relative;">
+            <h2 style="margin-top:0;text-align:center;">How to Play</h2>
+            <ul style="font-size:1.1rem;line-height:1.7;">
+                <li>Click a card to flip it and reveal a sound symbol.</li>
+                <li>Click another card to try and find its matching pair.</li>
+                <li>Each pair matches a sound symbol (like <b>SH</b>, <b>TH</b>, etc.).</li>
+                <li>Listen to the sound as you flip the card.</li>
+                <li>If the two cards match, they stay revealed and you hear a cheer!</li>
+                <li>If they don't match, they flip back over after a short pause.</li>
+                <li>Try to match all pairs in as few attempts as possible.</li>
+                <li>Use the <b>Reset</b> button to start over, or <b>Help</b> for spoken instructions.</li>
+            </ul>
+            <button onclick="hideHowToPlay()" style="margin:1rem auto 0 auto;display:block;background:#27ae60;color:#fff;border:none;border-radius:8px;padding:0.7rem 2rem;font-size:1.1rem;cursor:pointer;">Close</button>
+        </div>
+    </div>
+</body>
+<script>
+    // ... (existing JS code from previous answer) ...
+
+    // Modal popup logic
+    function showHowToPlay() {
+        document.getElementById('howToPlayModal').style.display = 'block';
+    }
+    function hideHowToPlay() {
+        document.getElementById('howToPlayModal').style.display = 'none';
+    }
+    // Close modal on background click
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('howToPlayModal');
+        if (modal.style.display === 'block' && e.target === modal) {
+            hideHowToPlay();
+        }
+    });
+
+    // (rest of your existing JS code goes here)
+    // Card sets with audio and visual representations
+    const cardSets = {
+        basic: [
+            { id: 'sh', display: 'SH', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'ch', display: 'CH', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'th', display: 'TH', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'ph', display: 'PH', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' }
+        ],
+        advanced: [
+            { id: 'ough', display: 'OUGH', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'tion', display: 'TION', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'sion', display: 'SION', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' },
+            { id: 'cian', display: 'CIAN', audio: 'https://www.englishclub.com/pronunciation/phonemic-chart-american.mp3' }
+        ]
+    };
+
+    let activeCards = [];
+    let canFlip = true;
+    let attemptCount = 0;
+    let matchCount = 0;
+
+    function createGameBoard(cards) {
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        
+        const gameCards = [...cards, ...cards]
+            .sort(() => Math.random() - 0.5)
+            .map(card => {
+                const div = document.createElement('div');
+                div.className = 'memory-card card-back';
+                div.dataset.id = card.id;
+                div.dataset.audio = card.audio;
+                div.textContent = '?';
+                div.onclick = () => handleCardFlip(div);
+                return div;
+            });
+
+        gameCards.forEach(card => grid.appendChild(card));
+    }
+
+    function handleCardFlip(card) {
+        if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+        // Flip card
+        card.classList.add('flipped');
+        card.textContent = card.dataset.id.toUpperCase();
+        playSound(card.dataset.audio);
+        activeCards.push(card);
+
+        if (activeCards.length === 2) {
+            canFlip = false;
+            attemptCount++;
+            document.getElementById('attemptCount').textContent = attemptCount;
+            
+            if (activeCards[0].dataset.id === activeCards[1].dataset.id) {
+                activeCards.forEach(c => c.classList.add('matched'));
+                matchCount++;
+                document.getElementById('matchCount').textContent = matchCount;
+                playSuccessSound();
+                canFlip = true;
+            } else {
+                setTimeout(() => {
+                    activeCards.forEach(c => {
+                        c.classList.remove('flipped');
+                        c.textContent = '?';
+                    });
+                    canFlip = true;
+                }, 1500);
+            }
+            activeCards = [];
+        }
+    }
+
+    function playSound(url) {
+        const audio = new Audio(url);
+        audio.play().catch(() => {});
+    }
+
+    function playSuccessSound() {
+        const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg');
+        audio.play();
+    }
+
+    function loadCardSet(setName) {
+        const cards = cardSets[setName];
+        createGameBoard(cards);
+        resetCounters();
+    }
+
+    function resetGame() {
+        const cards = Array.from(document.querySelectorAll('.memory-card'));
+        cards.forEach(card => {
+            card.classList.remove('flipped', 'matched');
+            card.textContent = '?';
+        });
+        resetCounters();
+        canFlip = true;
+    }
+
+    function resetCounters() {
+        attemptCount = 0;
+        matchCount = 0;
+        document.getElementById('attemptCount').textContent = '0';
+        document.getElementById('matchCount').textContent = '0';
+    }
+
+    function speakInstructions() {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(
+                "Match the sound symbols. Click two cards to find pairs. Listen carefully!"
+            );
+            speechSynthesis.speak(utterance);
+        }
+    }
+
+    // Initialize with basic set
+    loadCardSet('basic');
+</script>
+
+</body>
+</html>

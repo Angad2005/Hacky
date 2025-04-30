@@ -164,82 +164,79 @@
     <div class="category-title">OCD</div>
     <div class="category-description">Interactive games to help manage intrusive thoughts and promote calm focus.</div>
     <div class="container scroll-1">
-        <a href="{% url 'shells' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        <div class="card" onclick="window.location.href='{% url 'Shells' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
                 <span class="card__title">Click10-Shells</span>
                 <p class="card__describe">Arrange orbiting dots into perfect symmetry.</p>
             </div>
-        </a>
-        <a href="{% url 'lock' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Lock' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80deea, #4fc3f7);"></div>
             <div class="card__content">
                 <span class="card__title">Locksmith-Puzzle</span>
                 <p class="card__describe">Swipe away intrusive thoughts as clouds.</p>
             </div>
-        </a>
-        
-        <a href="{% url 'reset' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Reset' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #ce93d8, #ba68c8, #ab47bc);"></div>
             <div class="card__content">
                 <span class="card__title">Ritual-Reset</span>
                 <p class="card__describe">Tap to disrupt repeating patterns.</p>
             </div>
-        </a>
-        
-        <a href="{% url 'sym' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'Sym' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c5cae9, #9fa8da, #7986cb);"></div>
             <div class="card__content">
                 <span class="card__title">Symmetry-Sketch</span>
                 <p class="card__describe">Align tilting objects mindfully.</p>
             </div>
-        </a>
-        
-        <a href="{% url 'needle' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'needle' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
             <div class="card__content">
                 <span class="card__title">Thread-The-Needle</span>
                 <p class="card__describe">Count breaths to stop looping thoughts.</p>
             </div>
-        </a>
+        </div>
     </div>
 
     <!-- Dyslexia Category -->
     <div class="category-title">Dyslexia</div>
     <div class="category-description">Fun activities to improve reading skills and boost confidence.</div>
     <div class="container scroll-1">
-        <a href="{% url 'finder' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+        <div class="card" onclick="window.location.href='{% url 'memmatch' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #fff9c4, #fff59d, #fff176);"></div>
             <div class="card__content">
-                <span class="card__title">Path-Finder-Quest</span>
+                <span class="card__title">Memory Match: Sounds & Symbols</span>
                 <p class="card__describe">Match floating letters to form words.</p>
             </div>
-        </a>
-        <div class="card">
+        </div>
+        <div class="card" onclick="window.location.href='{% url 'wordpuzzle' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #ffecb3, #ffe082, #ffd54f);"></div>
             <div class="card__content">
-                <span class="card__title">Letter Flip</span>
+                <span class="card__title">WordPuzzle</span>
                 <p class="card__describe">Flip scrambled tiles to read correctly.</p>
             </div>
         </div>
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80cbc4, #4db6ac);"></div>
             <div class="card__content">
-                <span class="card__title">Sound Match</span>
+                <span class="card__title">Word Builder</span>
                 <p class="card__describe">Pair sounds with visuals.</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card" onclick="window.location.href='{% url 'wordbuilder' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
-                <span class="card__title">Clear Path</span>
+                <span class="card__title">Syllable Symphony</span>
                 <p class="card__describe">Guide a ball through readable mazes.</p>
             </div>
         </div>
-        <div class="card">
+        <div class="card" onclick="window.location.href='{% url 'voyage' %}'" style="cursor: pointer;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
             <div class="card__content">
-                <span class="card__title">Focus Frame</span>
+                <span class="card__title">Vocabulary Voyager</span>
                 <p class="card__describe">Highlight text one word at a time.</p>
             </div>
         </div>
