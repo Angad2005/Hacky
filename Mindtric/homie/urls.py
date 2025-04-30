@@ -22,10 +22,10 @@ urlpatterns = [
     path('needle/', needle, name='needle'),
     #Dyslexic
     path('wordpuzzle/', wordpuzzle, name='wordpuzzle'),
-    path('wordbuilder/', wordbuilder, name='wordpuzzle'),
+    path('wordbuilder/', wordbuilder, name='wordbuilder'),
     path('voyager/', voyager, name='voyager'), 
     path('symphony/', symphony, name='symphony'), 
-    path('memmatch/', memmatch, name='symphony'),   
+    path('memmatch/', memmatch, name='memmatch'),   
     #Anxiety
     path('zengarden/', zengarden, name='zengaeden'),   
     path('breath/', breath, name='breath'),   
