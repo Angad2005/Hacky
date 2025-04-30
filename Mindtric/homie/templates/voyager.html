@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vocabulary Voyager</title>
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+            background: #222;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+        }
+        .game-container {
+            background: #111;
+            padding: 2rem 2.5rem;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.4);
+            max-width: 480px;
+            width: 95%;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            font-size: 2.2rem;
+            letter-spacing: 0.05em;
+        }
+        .definition {
+            background: #fff;
+            color: #111;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 1.5rem 0 1rem 0;
+            font-size: 1.2rem;
+            position: relative;
+        }
+        .tts-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .word-prompt {
+            font-size: 2rem;
+            letter-spacing: 0.3em;
+            text-align: center;
+            margin: 1rem 0 2rem 0;
+        }
+        .input-area {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        input[type="text"] {
+            font-size: 1.3rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: #fff;
+            color: #111;
+            width: 150px;
+            font-family: 'OpenDyslexic', Arial, sans-serif;
+        }
+        button {
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .feedback {
+            text-align: center;
+            min-height: 2rem;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .streak {
+            color: #f1c40f;
+            font-weight: bold;
+        }
+        .timer {
+            color: #27ae60;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Vocabulary Voyager 🚀</h1>
+        <div class="stats">
+            <div>Streak: <span class="streak" id="streakCount">0</span></div>
+            <div>⏱️ <span class="timer" id="timer">0.0</span>s</div>
+        </div>
+        <div class="definition" id="definitionBox">
+            <span id="definitionText"></span>
+            <button class="tts-btn" onclick="speakDefinition()" title="Listen to definition">🔊</button>
+        </div>
+        <div class="word-prompt" id="wordPrompt"></div>
+        <form class="input-area" onsubmit="submitGuess(event)">
+            <input type="text" id="guessInput" autocomplete="off" aria-label="Your guess" autofocus>
+            <button type="submit" id="submitBtn">Guess</button>
+        </form>
+        <div class="feedback" id="feedback"></div>
+        <button onclick="nextWord()" id="nextBtn" style="display:none;">Next Word</button>
+    </div>
+    <script>
+        // Word list: {definition, word}
+        const words = [
+            {definition: "A large feline found in jungles and grasslands.", word: "tiger"},
+            {definition: "A celestial body that gives us light and warmth.", word: "sun"},
+            {definition: "A vehicle that flies in the sky and carries passengers.", word: "airplane"},
+            {definition: "A fruit that keeps the doctor away if eaten daily.", word: "apple"},
+            {definition: "A place where you can borrow books.", word: "library"},
+            {definition: "A tool used to write or draw with ink.", word: "pen"},
+            {definition: "A person who teaches students.", word: "teacher"},
+            {definition: "A building where movies are shown.", word: "cinema"},
+            {definition: "A cold, frozen dessert often eaten in summer.", word: "icecream"},
+            {definition: "A reptile with a hard shell, moves slowly.", word: "turtle"}
+        ];
+
+        let currentWordIndex = 0;
+        let streak = 0;
+        let timerInterval = null;
+        let startTime = 0;
+        let timeTaken = 0;
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function displayWordPrompt(word) {
+            let prompt = word[0].toUpperCase() + " ";
+            for (let i = 1; i < word.length; i++) {
+                prompt += "_ ";
+            }
+            document.getElementById('wordPrompt').textContent = prompt.trim();
+        }
+
+        function loadWord() {
+            document.getElementById('feedback').textContent = "";
+            document.getElementById('nextBtn').style.display = "none";
+            document.getElementById('guessInput').value = "";
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('guessInput').focus();
+
+            const wordObj = words[currentWordIndex];
+            document.getElementById('definitionText').textContent = wordObj.definition;
+            displayWordPrompt(wordObj.word);
+
+            // Start timer
+            startTimer();
+        }
+
+        function submitGuess(e) {
+            e.preventDefault();
+            const guess = document.getElementById('guessInput').value.trim().toLowerCase();
+            const wordObj = words[currentWordIndex];
+            stopTimer();
+
+            if (guess === wordObj.word.toLowerCase()) {
+                let bonus = timeTaken < 5 ? "⏱️ Speed Bonus! " : "";
+                streak++;
+                document.getElementById('feedback').innerHTML = `${bonus}✅ Correct! The word was <b>${wordObj.word.toUpperCase()}</b>.`;
+                document.getElementById('streakCount').textContent = streak;
+                document.getElementById('guessInput').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('nextBtn').style.display = "inline-block";
+            } else {
+                streak = 0;
+                document.getElementById('feedback').innerHTML = `❌ Try again!`;
+                document.getElementById('streakCount').textContent = streak;
+                document.getElementById('guessInput').focus();
+                startTimer();
+            }
+        }
+
+        function nextWord() {
+            currentWordIndex++;
+            if (currentWordIndex >= words.length) {
+                document.getElementById('feedback').innerHTML = `🎉 Game Over! Final streak: <b>${streak}</b>.<br>Refresh to play again.`;
+                document.getElementById('nextBtn').style.display = "none";
+                document.getElementById('guessInput').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+                return;
+            }
+            loadWord();
+        }
+
+        function speakDefinition() {
+            const def = document.getElementById('definitionText').textContent;
+            if ('speechSynthesis' in window) {
+                const utter = new SpeechSynthesisUtterance(def);
+                utter.rate = 0.9;
+                utter.pitch = 1.1;
+                speechSynthesis.speak(utter);
+            }
+        }
+
+        function startTimer() {
+            stopTimer();
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timeTaken = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('timer').textContent = timeTaken;
+        }
+
+        function updateTimer() {
+            let elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            document.getElementById('timer').textContent = elapsed;
+        }
+
+        // Keyboard: Enter submits, Ctrl+L focuses input
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+                document.getElementById('guessInput').focus();
+            }
+        });
+
+        // Shuffle words and start game
+        shuffle(words);
+        loadWord();
+    </script>
+</body>
+</html>
