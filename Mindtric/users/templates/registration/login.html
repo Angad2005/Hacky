@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindtric | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rainbow-5: #54A0FF;
+            --rainbow-6: #A56BFF;
+            --dark: #2D3436;
+            --light: #F9F9F9;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+
+        .welcome-side {
+            background: linear-gradient(135deg, var(--rainbow-5), var(--rainbow-6));
+            padding: 60px;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-side {
+            padding: 60px 40px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px 25px;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--rainbow-5);
+            outline: none;
+            box-shadow: 0 0 10px rgba(84, 160, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, var(--rainbow-5), var(--rainbow-6));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .alternate-action {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .alternate-action a {
+            color: var(--rainbow-5);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .emoji {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-emoji {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-side {
+                display: none;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-side">
+            <div class="floating-emoji">🎮</div>
+            <h1>Welcome Back! 👋</h1>
+            <p>Ready to continue your wellness journey?</p>
+            <div class="floating-emoji" style="animation-delay: 0.5s">🌈</div>
+        </div>
+
+        <div class="form-side">
+            <h2 style="text-align: center; margin-bottom: 40px;">Login to Mindtric</h2>
+            <form action="" method="post" style="
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #fff;
+">
+    {% csrf_token %}
+    <div class="input" style="margin-bottom: 15px;">
+        <label for="username" style="display: block; margin-bottom: 5px;">Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter email" style="
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        ">
+    </div>
+    <div class="input" style="margin-bottom: 15px;">
+        <label for="password" style="display: block; margin-bottom: 5px;">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" style="
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        ">
+    </div>
+    <button type="submit" class="login-button" style="
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    ">Log in</button>
+    <div class="signup-link" style="margin-top: 10px;">
+        Don't have an account? <a href="{% url 'signup' %}" style="color: #007bff; text-decoration: underline;">Sign up</a>
+    </div>
+</form>
+        </div>
+    </div>
+</body>
+</html>
