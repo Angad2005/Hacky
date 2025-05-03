@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Memory Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #232339;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .game-container {
+      background: #f6f8fa;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 2rem;
+      margin-top: 3rem;
+      position: relative;
+    }
+    .stats {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #232339;
+      font-size: 1.1rem;
+    }
+    .memory-board {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      background: #e0e7ef;
+      padding: 18px;
+      border-radius: 18px;
+      justify-items: center;
+    }
+    .tile {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      background: #8ecae6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 2px 8px #23233933;
+      border: 2px solid #e0e7ef;
+      transition: background 0.2s, transform 0.2s;
+      position: relative;
+    }
+    .tile.revealed, .tile.matched {
+      background: #fff;
+      cursor: default;
+      border: 2px solid #b5ead7;
+      transform: scale(1.07);
+    }
+    .tile.matched {
+      background: #ffe066;
+      border: 2px solid #ffe066;
+    }
+    .tile .emoji {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tile.revealed .emoji, .tile.matched .emoji {
+      opacity: 1;
+    }
+    .tile:not(.revealed):not(.matched):hover {
+      background: #bdb2ff;
+    }
+    .win-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      background: #fff;
+      color: #232339;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(140,163,155,0.18);
+      padding: 2rem 2.5rem;
+      z-index: 100;
+      text-align: center;
+      font-size: 1.3rem;
+      display: none;
+    }
+    .win-message.show {
+      display: block;
+    }
+    .pause-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #8ecae6;
+      color: #232339;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      padding: 0.7rem 1.3rem;
+      cursor: pointer;
+      opacity: 0.95;
+      transition: background 0.2s;
+      z-index: 20;
+    }
+    .pause-btn:hover { background: #ffb4a2; color: #232339; }
+    .pause-modal {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #f6f8fa;
+      color: #232339;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(140,163,155,0.18);
+      padding: 2.5rem 3rem;
+      z-index: 100;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    .pause-modal.show { display: block; }
+    .pause-modal button {
+      margin-top: 1.5rem;
+      background: #8ecae6;
+      color: #232339;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      padding: 0.7rem 1.5rem;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+    .pause-modal button:hover { background: #ffb4a2; }
+    @media (max-width: 800px) {
+      .memory-board { grid-template-columns: repeat(4, 1fr); }
+      .tile { width: 48px; height: 48px; font-size: 1.3rem; }
+    }
+    @media (max-width: 500px) {
+      .game-container { padding: 0.5rem; margin-top: 1rem; }
+      .memory-board { padding: 2vw; gap: 8px;}
+      .tile { width: 36px; height: 36px; font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  {% include '0base.html' %}
+  <div class="game-container">
+    <h2 style="color:#219ebc;text-align:center;margin-bottom:1.2rem;">Emoji Memory Game</h2>
+    <div class="stats">
+      Time: <span id="timer">0</span>s &nbsp;|&nbsp;
+      Misses: <span id="misses">0</span>
+    </div>
+    <div class="memory-board" id="memoryBoard"></div>
+  </div>
+  <div class="win-message" id="winMessage"></div>
+  <button class="pause-btn" id="pauseBtn">Pause &amp; Breathe</button>
+  <div class="pause-modal" id="pauseModal">
+    <h2>Mindful Pause</h2>
+    <p>Take a slow, deep breath in...<br>And out.<br><br>
+      Stretch your arms gently and relax your shoulders.<br>
+      <span style="font-size:1.6rem;">🧘‍♂️</span>
+    </p>
+    <button id="resumeBtn">Resume Game</button>
+  </div>
+  <script>
+    // 12 unique emojis, each appears exactly twice
+    const uniqueEmojis = [
+      "🌸", "💎", "🍀", "⭐", "🍋", "🌿",
+      "🧊", "🔮", "🦋", "🍉", "🎈", "🧸"
+    ];
+    const totalPairs = uniqueEmojis.length;
+    let boardEmojis = [];
+    let revealed = [];
+    let matched = [];
+    let busy = false;
+    let misses = 0;
+    let timer = 0;
+    let timerInterval = null;
+
+    function shuffle(array) {
+      for(let i=array.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+      }
+      return array;
+    }
+
+    function startGame() {
+      boardEmojis = shuffle([...uniqueEmojis, ...uniqueEmojis]);
+      revealed = [];
+      matched = [];
+      misses = 0;
+      timer = 0;
+      updateStats();
+      createBoard();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timer++;
+        document.getElementById('timer').textContent = timer;
+      }, 1000);
+    }
+
+    function createBoard() {
+      const board = document.getElementById('memoryBoard');
+      board.innerHTML = '';
+      for(let i=0;i<boardEmojis.length;i++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.dataset.idx = i;
+        if(revealed.includes(i)) tile.classList.add('revealed');
+        if(matched.includes(i)) tile.classList.add('matched');
+        tile.innerHTML = `<span class="emoji">${boardEmojis[i]}</span>`;
+        tile.onclick = () => handleTileClick(i, tile);
+        board.appendChild(tile);
+      }
+    }
+
+    function handleTileClick(idx, tileEl) {
+      if (busy) return;
+      if (revealed.includes(idx) || matched.includes(idx)) return;
+      if (revealed.length === 2) return;
+      revealed.push(idx);
+      createBoard();
+      if (revealed.length === 2) {
+        busy = true;
+        const [i1, i2] = revealed;
+        if (boardEmojis[i1] === boardEmojis[i2]) {
+          matched.push(i1,i2);
+          setTimeout(() => {
+            revealed = [];
+            busy = false;
+            createBoard();
+            checkWin();
+          }, 800);
+        } else {
+          misses++;
+          updateStats();
+          setTimeout(() => {
+            revealed = [];
+            busy = false;
+            createBoard();
+          }, 1100);
+        }
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('misses').textContent = misses;
+      document.getElementById('timer').textContent = timer;
+    }
+
+    function checkWin() {
+      if (matched.length === boardEmojis.length) {
+        clearInterval(timerInterval);
+        showWinMessage();
+      }
+    }
+
+    function showWinMessage() {
+      const msg = document.getElementById('winMessage');
+      msg.innerHTML = `
+        <div>🎉 You found all pairs!</div>
+        <div>Time: <b>${timer}</b> seconds</div>
+        <div>Misses: <b>${misses}</b></div>
+        <div style="margin-top:1em;font-size:1rem;">Restarting in 3 seconds...</div>
+      `;
+      msg.classList.add('show');
+      setTimeout(() => {
+        msg.classList.remove('show');
+        startGame();
+      }, 3000);
+    }
+
+    // Mindful Pause
+    const pauseModal = document.getElementById('pauseModal');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resumeBtn = document.getElementById('resumeBtn');
+    pauseBtn.onclick = () => pauseModal.classList.add('show');
+    resumeBtn.onclick = () => pauseModal.classList.remove('show');
+
+    // Start game
+    startGame();
+  </script>
+</body>
+</html>

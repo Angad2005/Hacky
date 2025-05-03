@@ -1,0 +1,24 @@
+<!-- template for the back button in every page -->
+
+<a href="{% url 'games_index' %}" class="back-btn">← Back to Games</a>
+<style>
+.back-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  background: #8ecae6;
+  color: #232339;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  padding: 0.7rem 1.3rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px #23233933;
+  transition: background 0.2s;
+  z-index: 1000;
+}
+.back-btn:hover {
+  background: #ffb4a2;
+  color: #232339;
+}
+</style>

@@ -155,6 +155,7 @@
     </style>
 </head>
 <body>
+   
     <div class="header">
         <h1>Therapeutic Play Hub</h1>
     </div>
@@ -167,8 +168,8 @@
         <a href="{% url 'Shells' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
-              <span class="card__title">Click10-Shells</span>
-              <p class="card__describe">Arrange orbiting dots into perfect symmetry.</p>
+              <span class="card__title">Counting Calm</span>
+              <p class="card__describe">Counting Calm is a timed game where you click 10 seashells while avoiding rocks to score points before time runs out.</p>
             </div>
           </a>
           
@@ -176,7 +177,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80deea, #4fc3f7);"></div>
             <div class="card__content">
               <span class="card__title">Locksmith-Puzzle</span>
-              <p class="card__describe">Swipe away intrusive thoughts as clouds.</p>
+              <p class="card__describe">Locksmith’s Puzzle is a game where you adjust a dial, slider, buttons, and switches to match a secret combination, guided by ticking sounds, to unlock the lockbox and earn points.</p>
             </div>
           </a>
           
@@ -184,7 +185,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #ce93d8, #ba68c8, #ab47bc);"></div>
             <div class="card__content">
               <span class="card__title">Ritual-Reset</span>
-              <p class="card__describe">Tap to disrupt repeating patterns.</p>
+              <p class="card__describe">Ritual Reset is a calming game where you click ritual items in the correct order-Light Candle, Pour Water, Arrange Flowers-to complete the space reset and feel the calm.</p>
             </div>
           </a>
           
@@ -192,7 +193,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #c5cae9, #9fa8da, #7986cb);"></div>
             <div class="card__content">
               <span class="card__title">Symmetry-Sketch</span>
-              <p class="card__describe">Align tilting objects mindfully.</p>
+              <p class="card__describe">Symmetry Sketch is a creative drawing game where you draw on the left side of the canvas and watch your strokes mirror perfectly on the right side in real-time.</p>
             </div>
           </a>
           
@@ -200,7 +201,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
             <div class="card__content">
               <span class="card__title">Thread-The-Needle</span>
-              <p class="card__describe">Count breaths to stop looping thoughts.</p>
+              <p class="card__describe">Thread the Needle is a stitching game where you click colored gaps in a specific order to connect them with thread lines, creating a beautiful tapestry design.</p>
             </div>
           </a></div>
 
@@ -212,7 +213,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #fff9c4, #fff59d, #fff176);"></div>
             <div class="card__content">
               <span class="card__title">Memory Match: Sounds & Symbols</span>
-              <p class="card__describe">Match floating letters to form words.</p>
+              <p class="card__describe">Memory Match: Sounds & Symbols is a calming, dyslexia-friendly game where players match letters or phonemes with sounds or images to boost memory skills.</p>
             </div>
           </a>
           
@@ -220,7 +221,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #ffecb3, #ffe082, #ffd54f);"></div>
             <div class="card__content">
               <span class="card__title">WordPuzzle</span>
-              <p class="card__describe">Flip scrambled tiles to read correctly.</p>
+              <p class="card__describe">Phonemic Puzzle Quest is a dyslexia-friendly game where players drag letters to correctly spell words, enhancing phonemic awareness through interactive, spoken instructions.</p>
             </div>
           </a>
           
@@ -228,7 +229,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2dfdb, #80cbc4, #4db6ac);"></div>
             <div class="card__content">
               <span class="card__title">Word Builder</span>
-              <p class="card__describe">Pair sounds with visuals.</p>
+              <p class="card__describe">Word Builder Arena is a dyslexia-friendly word game where players drag and drop shuffled letters to correctly spell words, enhancing spelling skills with visual cues and progress tracking.</p>
             </div>
           </div>
           
@@ -236,7 +237,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
               <span class="card__title">Syllable Symphony</span>
-              <p class="card__describe">Guide a ball through readable mazes.</p>
+              <p class="card__describe">Syllable Symphony is a dyslexia-friendly game where players listen to words and tap the correct number of syllables, progressing through levels that include rhythmic segmentation and stress identification.</p>
             </div>
           </a>
           
@@ -244,7 +245,7 @@
             <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
             <div class="card__content">
               <span class="card__title">Vocabulary Voyager</span>
-              <p class="card__describe">Highlight text one word at a time.</p>
+              <p class="card__describe">Vocabulary Voyager is a dyslexia-friendly word guessing game where players read definitions, type the correct word, and earn streaks with timed challenges and speech support.</p>
             </div>
           </a></div></div>
 
@@ -252,126 +253,161 @@
     <div class="category-title">Anxiety</div>
     <div class="category-description">Soothing games to ease worries and teach relaxation techniques.</div>
     <div class="container scroll-1">
+        <a href="{% url 'breath' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
         <div class="card">
-            <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
-            <a href="{% url 'breath' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit;">
+            <!-- <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div> -->
                 <div class="card__image" style="background-image: linear-gradient(to right top, #e3f2fd, #bbdefb, #90caf9);"></div>
                 <div class="card__content">
                   <span class="card__title">Breath Bubble</span>
-                  <p class="card__describe">Inflate a bubble with deep breaths.</p>
+                  <p class="card__describe">A visual breathing exercise tool. A calming animation guides users to inhale, hold, and exhale in rhythm, optionally syncing with their microphone or just following the animation.</p>
                 </div>
-              </a>
-        </div>
-        <div class="card">
+              
+        </div></a>
+        <a href="{% url 'zengarden' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
             <div class="card__content">
-                <span class="card__title">Worry Wave</span>
-                <p class="card__describe">Dissolve worries into the sea.</p>
+                <span class="card__title">Zen Garden</span>
+                <p class="card__describe">Players create and customize their own virtual Zen garden. They can rake sand, place stones, arrange plants, and listen to ambient nature sounds.</p>
             </div>
-        </div>
+        </a>
+        
+        <a href="{% url 'soundscape' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
-                <span class="card__title">Calm Garden</span>
-                <p class="card__describe">Plant flowers to reframe thoughts.</p>
+                <span class="card__title">Soothing SoundScaper</span>
+                <p class="card__describe">Users mix and match ambient sounds (rain, ocean, wind, birds, soft music) to create their own personalized relaxing soundscape. Visuals change to match the chosen sounds.</p>
             </div>
         </div>
+        </a>
+
+        <a href="{% url 'gentlepuzzle' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
             <div class="card__content">
-                <span class="card__title">Safe Space</span>
-                <p class="card__describe">Build a cozy virtual room.</p>
+                <span class="card__title">Gentle Puzzle Flow</span>
+                <p class="card__describe">A series of calming, untimed puzzles (like sliding tiles, connecting constellations, or arranging shapes) with soft feedback and tranquil visuals.</p>
             </div>
         </div>
+        </a>
+
+        <a href="{% url 'jigsaw' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
             <div class="card__content">
-                <span class="card__title">Mindful Maze</span>
-                <p class="card__describe">Navigate with slow breathing.</p>
+                <span class="card__title">Jigsaw Planet</span>
+                <p class="card__describe">Solve online jigsaw puzzles using beautiful, tranquil images (nature, animals, abstract art). Choose your difficulty and piece count.</p>
             </div>
+            </div>
+        </a>
         </div>
     </div>
+    
 
     <!-- Depression Category -->
     <div class="category-title">Depression</div>
     <div class="category-description">Uplifting challenges to inspire hope and small victories.</div>
     <div class="container scroll-1">
+        <a href="{% url 'metaphor' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #d1c4e9, #b39ddb, #9575cd);"></div>
             <div class="card__content">
-                <span class="card__title">Light Lantern</span>
-                <p class="card__describe">Illuminate dark paths.</p>
+                <span class="card__title">Metaphor Maze: Generative Journeys</span>
+                <p class="card__describe">Metaphor Maze turns your journal entry into a calming maze adventure, complete with emotion challenges and a shareable storybook.</p>
             </div>
         </div>
+        </a>
+        
+        <a href="{% url 'growthgarden' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
+        <div class="card">
+            <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
+            <div class="card__content">
+                <span class="card__title">Growth Garden</span>
+                <p class="card__describe">Nurture virtual plants that represent your emotional growth, track your mood, and collect achievements as you practice self-care.</p>
+            </div>
+        </div>
+        </a>
+        
+        <a href="{% url 'constellation' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
             <div class="card__content">
-                <span class="card__title">Joy Jar</span>
-                <p class="card__describe">Fill a jar with positive prompts.</p>
+                <span class="card__title">Social Constellation</span>
+                <p class="card__describe">Social Constellation is a game where you send and receive positive messages to build a constellation of stars, unlock achievements, and join meteor showers for bonus stars.</p>
             </div>
         </div>
+        </a>
+        
+        <a href="{% url 'shadowwalk' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
             <div class="card__content">
-                <span class="card__title">Step Stones</span>
-                <p class="card__describe">Cross a river with small wins.</p>
+                <span class="card__title">Shadow Walk</span>
+                <p class="card__describe">Explore tranquil, abstract landscapes at your own pace. Discover hidden affirmations and calming scenes as you reflect, unwind, and find hope along the way.</p>
             </div>
         </div>
+        </a>
+
+        <a href="{% url 'thoughtfilter' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #d1c4e9, #b39ddb, #9575cd);"></div>
             <div class="card__content">
-                <span class="card__title">Mood Melody</span>
-                <p class="card__describe">Create a soothing tune.</p>
+                <span class="card__title">Thought Filter</span>
+                <p class="card__describe">Sort falling words into “helpful” or “unhelpful” baskets to practice positive thinking and gently build healthier thought habits.</p>
             </div>
         </div>
-        <div class="card">
-            <div class="card__image" style="background-image: linear-gradient(to right top, #b3e5fc, #81d4fa, #4fc3f7);"></div>
-            <div class="card__content">
-                <span class="card__title">Cloud Clear</span>
-                <p class="card__describe">Swipe away gray clouds.</p>
-            </div>
+        </a>
         </div>
-    </div>
 
     <!-- Stress Category -->
     <div class="category-title">Stress</div>
     <div class="category-description">Calming exercises to release tension and restore balance.</div>
     <div class="container scroll-1">
+        <a href="{% url 'bubbleshooter' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
             <div class="card__content">
-                <span class="card__title">Zen Stones</span>
-                <p class="card__describe">Stack rocks mindfully.</p>
+                <span class="card__title">Bubble Shooter</span>
+                <p class="card__describe">Pop colorful bubbles at your own pace with soothing sounds and visuals. A relaxing, pressure-free game to help you unwind and focus.</p>
             </div>
         </div>
+        </a>
+        <a href="{% url 'hexaflow' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #b2ebf2, #80deea, #4dd0e1);"></div>
             <div class="card__content">
-                <span class="card__title">Ripple Drop</span>
-                <p class="card__describe">Drop pebbles to calm water.</p>
+                <span class="card__title">HexaFlow Trance</span>
+                <p class="card__describe">Discover hidden objects in tranquil scenes.</p>
             </div>
         </div>
+        </a>
+        <a href="{% url 'colortherapy' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #c8e6c9, #a5d6a7, #81c784);"></div>
             <div class="card__content">
-                <span class="card__title">Tension Tangle</span>
-                <p class="card__describe">Untangle knotted lines.</p>
+                <span class="card__title">Color Therapy</span>
+                <p class="card__describe">Calm your mind with soothing colors and gentle coloring. Relax, create, and de-stress at your own pace.</p>
             </div>
-        </div>
+        </div></a>
+
+        <a href="{% url 'pattern' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #ffccbc, #ffab91, #ff8a65);"></div>
             <div class="card__content">
-                <span class="card__title">Pulse Pause</span>
-                <p class="card__describe">Match heartbeat to calm rhythm.</p>
+                <span class="card__title">Pattern Zen</span>
+                <p class="card__describe">Match calming gems to create soothing cascades and gentle rewards.
+                    Relax and unwind with endless, stress-free pattern matching designed to bring you peace.</p>
             </div>
-        </div>
+        </div></a>
+
+        <a href="{% url 'tetris' %}" class="card" style="cursor: pointer; text-decoration: none; color: inherit; display: block;">
         <div class="card">
             <div class="card__image" style="background-image: linear-gradient(to right top, #f8bbd0, #f48fb1, #f06292);"></div>
             <div class="card__content">
-                <span class="card__title">Harmony Hues</span>
-                <p class="card__describe">Paint with relaxing colors.</p>
+                <span class="card__title">Tetris</span>
+                <p class="card__describe">Tetris - A puzzle game where you fit falling blocks to clear lines and score points.</p>
             </div>
-        </div>
+        </div></a>
     </div>
 </body>
 </html>

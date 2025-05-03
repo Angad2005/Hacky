@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', home_view, name='home'),
-    path('index/', inder, name='inder'),
+    path('inder/', inder, name='inder'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('about/', about, name='about'),
     path('games_index/', games_index, name='games_index'),
@@ -27,10 +27,22 @@ urlpatterns = [
     path('symphony/', symphony, name='symphony'), 
     path('memmatch/', memmatch, name='memmatch'),   
     #Anxiety
-    path('zengarden/', zengarden, name='zengaeden'),   
+    path('zengarden/', zengarden, name='zengarden'),   
     path('breath/', breath, name='breath'),   
     path('soundscape/', soundscape, name='soundscape'),
-    path('gentlepuzzle/', gentlepuzzle, name='gentlepuzle'),
+    path('gentlepuzzle/', gentlepuzzle, name='gentlepuzzle'),
     path('jigsaw/', jigsaw, name='jigsaw'),
+    #Depression
+    path('metaphor/', metaphor, name='metaphor'),
+    path('constellation/', constellation, name='constellation'),
+    path('shadowwalk/', shadowwalk, name='shadowwalk'),
+    path('growthgarden/', growthgarden, name='growthgarden'),
+    path('thoughtfilter/', thoughtfilter, name='thoughtfilter'),
+    #Stress
+    path('bubbleshooter/', bubbleshooter, name='bubbleshooter'),
+    path('hexaflow/', hexaflow, name='hexaflow'),
+    path('colortherapy/', colortherapy, name='colortherapy'),
+    path('pattern/', pattern, name='pattern'),
+    path('tetris/', tetris, name='tetris'),
 
 ]
