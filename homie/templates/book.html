@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+    <link rel="stylesheet" type="text/css" href="#">
+    
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #dff9fb, #c7ecee);
+        }
+
+        .typing {
+  font-style: italic;
+  color: #888;
+  font-size: 18px;  /* ⬅️ Increased font size */
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+
+        h1 {
+            text-align: center;
+            color: #130f40;
+            margin: 20px 0;
+            font-size: 2em;
+        }
+
+        .bookshelf-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .shelf {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border-bottom: 4px solid #95afc0;
+            justify-content: center;
+        }
+
+        .book {
+            width: 80px; /* Width of the book spine */
+            height: 220px; /* Height of the book spine */
+            background: linear-gradient(to bottom, #6c5ce7, #74b9ff);
+            color: white;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.4);
+            overflow: hidden; /* Prevents text from overflowing the book spine */
+            padding: 5px; /* Adds padding to prevent text from touching edges */
+            word-break: break-word; /* Breaks long words to fit within the spine */
+        }
+
+        .book span {
+            transform: rotate(90deg); /* Rotates the text by 90 degrees */
+            display: inline-block; /* Ensures the rotation applies only to the text */
+        }
+
+        .book:hover {
+            transform: scale(1.1);
+            box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Popup styling */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            width: 350px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .popup-content img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .close-btn {
+            margin-top: 15px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background-color: #5a4fcf;
+        }
+
+        /* Ensure the link stays within the popup */
+        .popup-content p {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            margin: 10px 0;
+            font-size: 14px;
+            color: #130f40;
+        }
+
+        .popup-content a {
+            color: #6c5ce7;
+            text-decoration: none;
+            word-break: break-word;
+        }
+
+        .popup-content a:hover {
+            text-decoration: underline;
+        }
+        #chatbot-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+
+  #chat-popup {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #chat-header {
+    background: #4A90E2;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  #chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  #chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+
+  #chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  #chat-input button {
+    background: #4A90E2;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .message {
+    margin: 5px 0;
+  }
+
+  .user {
+    text-align: right;
+    color: #333;
+  }
+
+  .bot {
+    text-align: left;
+    color: #4A90E2;
+  }
+    </style>
+</head>
+<body class="main-page">
+    <nav class="navbar">
+        
+
+        <ul class="nav-menu">
+            <li><a href="{% url 'Team' %}">About Us</a></li>
+            <li><a href="{% url 'games_index' %}">Games</a></li>
+            <li><a href="{% url 'Book' %}">Content</a></li>
+            <li><a href="{% url 'Music' %}">Music Player</a></li>
+            <!-- <li><a href="#">Logout</a></li> Changed from Login to Logout -->
+        </ul>
+        
+    </nav>
+    <h1>Book-Shelf</h1>
+    <div class="bookshelf-container">
+        <h2>OCD</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('Obsessive-Compulsive Disorder: Advances in Diagnosis and Treatment', 'https://jamanetwork.com/journals/jama/fullarticle/2614194')">Advances in Diagnosis and Treatment</div>
+            <div class="book" onclick="openPopup('Understanding OCD', 'https://www.nimh.nih.gov/health/topics/obsessive-compulsive-disorder-ocd')">Understanding OCD</div>
+            <div class="book" onclick="openPopup('Our Favorite OCD Articles', 'https://www.treatmyocd.com/blog/our-favorite-ocd-articles-of-2023')">Our Favorite OCD Articles</div>
+        </div>
+        <h2>ADHD</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('ADHD Articles - CDC', 'https://www.cdc.gov/adhd/articles/index.html')">ADHD Articles - CDC</div>
+            <div class="book" onclick="openPopup('Best ADHD Articles', 'https://www.additudemag.com/best-of-2021-adhd-articles/')">Best ADHD Articles</div>
+            <div class="book" onclick="openPopup('ADHD in Adulthood', 'https://www.apa.org/monitor/2023/03/adult-adhd-diagnosis')">ADHD in Adulthood</div>
+        </div>
+        <h2>ANXIETY</h2>
+        <div class="shelf">
+            <div class="book" onclick="openPopup('Anxiety: What It Is', 'https://www.health.harvard.edu/blog/anxiety-what-it-is-what-to-do-2018060113955')">Anxiety: What It Is</div>
+            <div class="book" onclick="openPopup('Anxiety Overview', 'https://www.medicalnewstoday.com/articles/323454')">Anxiety Overview</div>
+            <div class="book" onclick="openPopup('Anxiety Disorders - WHO', 'https://www.who.int/news-room/fact-sheets/detail/anxiety-disorders')">Anxiety Disorders - WHO</div>
+        </div>
+    </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <h2 id="popup-title"></h2>
+            <p id="popup-link"></p>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <button id="chatbot-btn">💬</button>
+
+    <!-- Chat Popup -->
+    <div id="chat-popup">
+      <div id="chat-header">AI Chatbot</div>
+      <div id="chat-body"></div>
+      <div id="chat-input">
+        <input type="text" id="user-input" placeholder="Type a message..." />
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+
+    <script>
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const chatPopup = document.getElementById('chat-popup');
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+      
+        chatbotBtn.addEventListener('click', () => {
+          chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+        });
+      
+        async function sendMessage() {
+          const message = userInput.value.trim();
+          if (!message) return;
+      
+          appendMessage('user', message);
+          userInput.value = '';
+      
+          // Create bot message with loading animation
+          const botMsg = document.createElement('div');
+          botMsg.className = 'message bot typing';
+          const dots = document.createElement('span');
+          dots.textContent = '';
+          botMsg.appendChild(dots);
+          chatBody.appendChild(botMsg);
+      
+          animateDots(dots);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      
+          try {
+            const response = await fetch('http://localhost:5000/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message })
+            });
+      
+            const data = await response.json();
+            if (data.response) {
+              // Stop loading animation
+              botMsg.classList.remove('typing');
+              botMsg.textContent = '';
+              await typeEffect(botMsg, data.response);
+            } else {
+              botMsg.textContent = "Sorry, I couldn't understand that.";
+            }
+          } catch (error) {
+            botMsg.textContent = "Error connecting to chatbot.";
+          }
+      
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        function appendMessage(sender, text) {
+          const msg = document.createElement('div');
+          msg.className = 'message ' + sender;
+          msg.textContent = text;
+          chatBody.appendChild(msg);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        async function typeEffect(element, text, speed = 20) {
+          for (let i = 0; i < text.length; i++) {
+            element.textContent += text.charAt(i);
+            await new Promise(resolve => setTimeout(resolve, speed));
+          }
+        }
+      
+        function animateDots(element) {
+          let count = 0;
+          const interval = setInterval(() => {
+            if (!element.parentElement.classList.contains('typing')) {
+              clearInterval(interval);
+              return;
+            }
+            element.textContent = '.'.repeat((count % 3) + 1);
+            count++;
+          }, 500);
+        }
+      
+        userInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') sendMessage();
+        });
+      </script>
+      
+
+    <script>
+        function openPopup(title, link) {
+            document.getElementById('popup-title').textContent = title;
+            document.getElementById('popup-link').innerHTML = `<a href="${link}" target="_blank">${link}</a>`;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

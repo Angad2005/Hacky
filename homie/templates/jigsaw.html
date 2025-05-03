@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Memory Jigsaw (Gentle)</title>
+  <meta name="viewport" content="width=400, initial-scale=1" />
+  <style>
+    body { background: #f7fafd; font-family: 'Quicksand', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+    h2 { margin-top: 1.2rem; }
+    .target-area { margin: 1.2rem 0 0.5rem 0; }
+    .target-img { width: 180px; height: 120px; border-radius: 12px; box-shadow: 0 2px 10px #b9d6e7a0; display: block; margin: 0 auto; }
+    .jigsaw-area { width: 360px; height: 240px; background: #fff; border-radius: 18px; box-shadow: 0 2px 12px #b9d6e7a0; margin: 0.5rem 0 0.5rem 0; position: relative; }
+    .piece-tray { width: 360px; min-height: 130px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; background: #e7f0fa; border-radius: 12px; box-shadow: 0 1px 8px #b9d6e7a0; padding: 1rem 0.5rem; }
+    .piece { width: 120px; height: 80px; border-radius: 8px; box-shadow: 0 1px 6px #b9d6e7a0; cursor: grab; user-select: none; border: 2px solid #b9d6e7; background: #fff; position: relative; }
+    .piece.dragging { z-index: 10; box-shadow: 0 4px 16px #aee1d8; border: 2px solid #385a7c; }
+    .piece.placed { opacity: 0.6; pointer-events: none; }
+    .slot { position: absolute; width: 120px; height: 80px; border-radius: 8px; left: 0; top: 0; box-sizing: border-box; border: 2px dashed #b9d6e7; transition: border-color 0.3s; }
+    .slot.filled { border: 2px solid #7b8dd8; }
+    button { background: #385a7c; color: #fff; border: none; border-radius: 8px; padding: 0.7rem 1.7rem; font-size: 1rem; cursor: pointer; margin: 1rem 0.5rem; }
+    .congrats { color: #2a9d8f; font-size: 1.2rem; margin: 1.2rem 0 0.5rem 0; text-align: center; }
+    .score { color: #457b9d; font-size: 1.1rem; margin: 0.5rem 0 0.2rem 0; text-align: center; }
+    .fadeout { animation: fadeout 0.7s forwards; }
+    @keyframes fadeout { to { opacity: 0; } }
+  </style>
+</head>
+<body>
+  {% include '0base.html' %}
+ 
+  <h2>Memory Jigsaw</h2>
+  <div class="target-area" id="targetArea"></div>
+  <button onclick="viewTargetImage()">View Image</button>
+  <div class="score" id="score"></div>
+  <div class="jigsaw-area" id="jigsawArea"></div>
+  <div class="piece-tray" id="pieceTray"></div>
+  <div class="congrats" id="congrats"></div>
+  <script>
+    // SVG mandala (distinct regions)
+    const svgData = `<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="360" height="240" fill="#f4e2d8"/>
+      <ellipse cx="90" cy="120" rx="70" ry="100" fill="#f4a261"/>
+      <ellipse cx="270" cy="120" rx="70" ry="100" fill="#a8dadc"/>
+      <circle cx="180" cy="120" r="80" fill="#457b9d"/>
+      <circle cx="180" cy="120" r="40" fill="#e63946"/>
+      <g stroke="#457b9d" stroke-width="4">
+        <line x1="180" y1="40" x2="180" y2="200"/>
+        <line x1="60" y1="120" x2="300" y2="120"/>
+      </g>
+    </svg>`;
+    const img = new window.Image();
+    img.src = "data:image/svg+xml;utf8," + encodeURIComponent(svgData);
+
+    const targetArea = document.getElementById('targetArea');
+    const jigsawArea = document.getElementById('jigsawArea');
+    const pieceTray = document.getElementById('pieceTray');
+    const congrats = document.getElementById('congrats');
+    const scoreDiv = document.getElementById('score');
+    let gridW = 3, gridH = 2, pw = 120, ph = 80;
+    let slots = [], pieces = [], placedCount = 0;
+    let dragging = null, dragOffsetX = 0, dragOffsetY = 0, dragOrigin = null;
+    let score = 100, viewCount = 0, viewing = false;
+
+    img.onload = () => {
+      setupPuzzle();
+    };
+
+    function setupPuzzle() {
+      // Reset
+      targetArea.innerHTML = '';
+      jigsawArea.innerHTML = '';
+      pieceTray.innerHTML = '';
+      congrats.textContent = '';
+      slots = [];
+      pieces = [];
+      placedCount = 0;
+      score = 100;
+      viewCount = 0;
+      viewing = false;
+      updateScore();
+
+      // Slots
+      for(let y=0;y<gridH;y++) for(let x=0;x<gridW;x++) {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.style.left = (x*pw)+'px';
+        slot.style.top = (y*ph)+'px';
+        slot.dataset.x = x;
+        slot.dataset.y = y;
+        slot.dataset.filled = "false";
+        jigsawArea.appendChild(slot);
+        slots.push(slot);
+      }
+
+      // Pieces (random order)
+      let pieceList = [];
+      for(let y=0;y<gridH;y++) for(let x=0;x<gridW;x++) {
+        const canvas = document.createElement('canvas');
+        canvas.width = pw; canvas.height = ph;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, x*img.width/gridW, y*img.height/gridH, img.width/gridW, img.height/gridH, 0, 0, pw, ph);
+        ctx.strokeStyle = "#457b9d"; ctx.lineWidth = 2;
+        ctx.strokeRect(0,0,pw,ph);
+        pieceList.push({x, y, img: canvas.toDataURL()});
+      }
+      pieceList = pieceList.sort(()=>Math.random()-0.5);
+
+      // Add to tray
+      pieceList.forEach(data => {
+        const piece = document.createElement('div');
+        piece.className = 'piece';
+        piece.style.backgroundImage = `url(${data.img})`;
+        piece.dataset.x = data.x;
+        piece.dataset.y = data.y;
+        piece.draggable = false;
+        piece.addEventListener('mousedown', e => startDrag(e, piece, false));
+        piece.addEventListener('touchstart', e => startDrag(e, piece, true));
+        pieceTray.appendChild(piece);
+        pieces.push(piece);
+      });
+    }
+
+    function viewTargetImage() {
+      if (viewing) return;
+      viewing = true;
+      viewCount++;
+      if (viewCount > 1) score = Math.max(10, score - 20);
+      updateScore();
+
+      // Show target image for 3 seconds
+      targetArea.innerHTML = `<img src="${img.src}" class="target-img" id="targetImg" />`;
+      setTimeout(() => {
+        const targetImg = document.getElementById('targetImg');
+        if (targetImg) {
+          targetImg.classList.add('fadeout');
+          setTimeout(() => {
+            targetArea.innerHTML = '';
+            viewing = false;
+          }, 700);
+        } else {
+          viewing = false;
+        }
+      }, 2200);
+    }
+
+    function updateScore() {
+      scoreDiv.textContent = `Score: ${score}  ${viewCount > 1 ? `(viewed ${viewCount}x)` : ''}`;
+    }
+
+    function startDrag(e, piece, isTouch) {
+      if (piece.classList.contains('placed')) return;
+      dragging = piece;
+      dragOrigin = piece.parentElement;
+      piece.classList.add('dragging');
+      const rect = piece.getBoundingClientRect();
+      const ev = isTouch ? e.touches[0] : e;
+      dragOffsetX = ev.clientX - rect.left;
+      dragOffsetY = ev.clientY - rect.top;
+      document.onmousemove = moveDrag;
+      document.onmouseup = endDrag;
+      document.ontouchmove = moveDrag;
+      document.ontouchend = endDrag;
+      // Move to body for absolute positioning
+      piece.style.position = 'absolute';
+      piece.style.zIndex = 20;
+      piece.style.pointerEvents = 'none';
+      document.body.appendChild(piece);
+      moveDrag(e);
+      e.preventDefault();
+    }
+
+    function moveDrag(e) {
+      if (!dragging) return;
+      const ev = e.touches ? e.touches[0] : e;
+      let x = ev.clientX - dragOffsetX;
+      let y = ev.clientY - dragOffsetY;
+      dragging.style.left = x + 'px';
+      dragging.style.top = y + 'px';
+    }
+
+    function endDrag(e) {
+      if (!dragging) return;
+      // Check if over a slot
+      let placed = false;
+      const rectArea = jigsawArea.getBoundingClientRect();
+      const px = parseInt(dragging.dataset.x), py = parseInt(dragging.dataset.y);
+      const slot = slots.find(s =>
+        s.dataset.x == px && s.dataset.y == py &&
+        isOverSlot(s, dragging)
+      );
+      if (slot && slot.dataset.filled === "false") {
+        // Snap into place
+        dragging.style.left = (rectArea.left + px*pw) + 'px';
+        dragging.style.top = (rectArea.top + py*ph) + 'px';
+        dragging.style.position = 'absolute';
+        dragging.style.zIndex = 5;
+        dragging.classList.add('placed');
+        slot.dataset.filled = "true";
+        slot.classList.add('filled');
+        placedCount++;
+        placed = true;
+        if (placedCount === gridW * gridH) {
+          setTimeout(()=>{
+            congrats.textContent = `🌸 Well done! Puzzle complete. Final Score: ${score}`;
+          }, 350);
+        }
+      }
+      if (!placed) {
+        // Return to tray
+        dragging.classList.remove('dragging');
+        dragging.style.position = '';
+        dragging.style.left = '';
+        dragging.style.top = '';
+        dragging.style.zIndex = '';
+        dragging.style.pointerEvents = '';
+        pieceTray.appendChild(dragging);
+      } else {
+        dragging.classList.remove('dragging');
+        dragging.style.pointerEvents = '';
+      }
+      dragging = null;
+      document.onmousemove = null;
+      document.onmouseup = null;
+      document.ontouchmove = null;
+      document.ontouchend = null;
+    }
+
+    function isOverSlot(slot, piece) {
+      const slotRect = slot.getBoundingClientRect();
+      const pieceRect = piece.getBoundingClientRect();
+      // Check if center of piece is inside slot
+      const cx = pieceRect.left + pieceRect.width/2;
+      const cy = pieceRect.top + pieceRect.height/2;
+      return cx > slotRect.left && cx < slotRect.right && cy > slotRect.top && cy < slotRect.bottom;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garden Therapy - Mindful Plant Growth</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+        :root {
+            --primary: #385a7c;
+            --primary-light: #b9d6e7;
+            --primary-dark: #2a3a4a;
+            --accent: #5fa36c;
+            --accent-light: #aee1d8;
+            --bg-gradient: linear-gradient(135deg, #f0f4fa 0%, #e7f7f7 100%);
+            --card-bg: #f7fbff;
+            --text: #2a3a4a;
+            --text-light: #456;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        header {
+            font-size: 2.2rem;
+            letter-spacing: 0.04em;
+            color: var(--primary);
+            margin: 2rem 0 0.3rem 0;
+            text-align: center;
+        }
+        .desc {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            width: 90%;
+            max-width: 800px;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: var(--primary-light);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            color: var(--primary);
+            box-shadow: 0 2px 10px #c5d6e7a0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 700;
+            outline: none;
+        }
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            border-radius: 22px;
+            box-shadow: 0 4px 24px #b9d6e7a0;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            position: relative;
+            min-height: 500px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Garden area */
+        .garden-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .plot {
+            aspect-ratio: 1/1;
+            background: #e7e0d0;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .plot:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .plot.empty::after {
+            content: "🌱";
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+        .plot-plant {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+        }
+        .plant-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+            transition: transform 0.3s;
+        }
+        .plant-emoji:hover {
+            transform: scale(1.1);
+        }
+        .water-level {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: width 0.5s;
+        }
+        .growth-indicator {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Seed shop */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .shop-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .shop-item:hover {
+            transform: translateY(-5px);
+        }
+        .shop-item-img {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .shop-item-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+        }
+        .shop-item-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 0.8rem;
+        }
+        .shop-item-price {
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+        }
+        .buy-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .buy-btn:hover {
+            background: #4a8c59;
+        }
+        
+        /* Market */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .inventory-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .inventory-item-img {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .inventory-item-count {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 12px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .sell-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.4rem 0.8rem;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .sell-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+            font-weight: bold;
+        }
+        .stat-icon {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .modal-img {
+            font-size: 4rem;
+            margin: 1rem 0;
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .bounce {
+            animation: bounce 1s infinite;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .garden-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .garden-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+        }
+        
+        /* Achievement styles */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .achievement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border-left: 5px solid var(--primary-light);
+        }
+        .achievement-card.unlocked {
+            border-left-color: var(--accent);
+        }
+        .achievement-card:hover {
+            transform: translateY(-3px);
+        }
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        .achievement-card.unlocked .achievement-icon {
+            opacity: 1;
+        }
+        .achievement-info {
+            flex: 1;
+        }
+        .achievement-name {
+            font-weight: bold;
+            margin-bottom: 0.3rem;
+            color: var(--primary);
+        }
+        .achievement-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .achievement-reward {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+        }
+        
+        /* Improved modal */
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .plant-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin: 1rem 0;
+        }
+        .plant-info {
+            flex: 1;
+            text-align: left;
+            padding-left: 1.5rem;
+        }
+        .plant-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .plant-stat {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .plant-stat-icon {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.3rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-light), var(--accent));
+            border-radius: 4px;
+        }
+        
+        /* Improved modular UI components */
+        
+        /* Toast notification system */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1100;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: all;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+        .toast-close {
+            margin-left: 10px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .toast-close:hover {
+            opacity: 1;
+        }
+        .toast.success {
+            background: var(--accent);
+        }
+        .toast.error {
+            background: #e74c3c;
+        }
+        .toast.info {
+            background: var(--primary);
+        }
+        
+        /* Improved shop items */
+        .shop-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        .shop-item-img {
+            position: relative;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            border-radius: 12px 12px 0 0;
+            margin: -1rem -1rem 1rem -1rem;
+        }
+        .shop-item-content {
+            padding: 0 0.5rem;
+        }
+        .shop-item-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .shop-item-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-light);
+        }
+        .shop-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
+            border: none;
+            cursor: pointer;
+        }
+        .quantity-btn:hover {
+            background: #d0d0d0;
+        }
+        .quantity-value {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Improved garden plots */
+        .plot {
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .plot.empty:hover {
+            border-color: var(--accent);
+        }
+        .plot-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+        .plot:hover .plot-overlay {
+            opacity: 1;
+        }
+        .plot-action {
+            background: white;
+            color: var(--primary);
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            margin: 0.3rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .plot-action:hover {
+            background: var(--accent);
+            color: white;
+        }
+        .plot-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        .plot:hover .plot-info {
+            transform: translateY(0);
+        }
+        
+        /* Improved inventory items */
+        .inventory-item {
+            position: relative;
+            overflow: hidden;
+        }
+        .inventory-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        .inventory-quantity {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--primary);
+            color: white;
+            border-radius: 0 0 0 10px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Confirmation modal */
+        .confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .confirm-modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .confirm-content {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        .confirm-modal.show .confirm-content {
+            transform: scale(1);
+        }
+        .confirm-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        .confirm-message {
+            margin-bottom: 1.5rem;
+            color: var(--text-light);
+        }
+        .confirm-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .confirm-btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .confirm-btn.primary {
+            background: var(--accent);
+            color: white;
+        }
+        .confirm-btn.primary:hover {
+            background: #4a8c59;
+        }
+        .confirm-btn.secondary {
+            background: #e0e0e0;
+            color: var(--text);
+        }
+        .confirm-btn.secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        /* Plant selection panel */
+        .seed-selection-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1200;
+        }
+        .seed-selection-content {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .seed-selection-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .seed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .seed-card {
+            background: var(--primary-light);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .seed-card:hover {
+            transform: translateY(-5px);
+            background: var(--accent-light);
+        }
+        .seed-card-img {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .seed-card-name {
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        .seed-card-count {
+            background: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            padding: 0.1rem 0.4rem;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        .seed-selection-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    {% include '0base.html' %}
+    <div class="stats-bar">
+        <div class="stat">
+            <span class="stat-icon">💰</span>
+            <span id="money">100</span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🌱</span>
+            <span id="seeds">0</span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">💧</span>
+            <span id="water">10</span>
+        </div>
+        <div class="stat">
+            <span class="stat-icon">🏆</span>
+            <span id="level">1</span>
+        </div>
+    </div>
+
+    <header>Garden Therapy</header>
+    <div class="desc">
+        Nurture plants, watch them grow, and find peace in your virtual garden.<br>
+        A calming space to reduce stress and practice mindfulness.
+    </div>
+    
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="showTab('garden')">My Garden</button>
+        <button class="tab-btn" onclick="showTab('shop')">Seed Shop</button>
+        <button class="tab-btn" onclick="showTab('market')">Market</button>
+        <button class="tab-btn" onclick="showTab('achievements')">Achievements</button>
+    </div>
+    
+    <div id="garden" class="container">
+        <h2>My Garden</h2>
+        <p>Click on an empty plot to plant a seed. Water your plants regularly to help them grow.</p>
+        <div class="garden-grid" id="gardenGrid"></div>
+        <div class="garden-actions">
+            <button onclick="waterAllPlants()" class="buy-btn">Water All Plants (💧1)</button>
+        </div>
+    </div>
+    
+    <div id="shop" class="container hidden">
+        <h2>Seed Shop</h2>
+        <p>Purchase seeds to grow in your garden. Different plants have different growth times and rewards.</p>
+        <div class="shop-grid" id="shopGrid"></div>
+    </div>
+    
+    <div id="market" class="container hidden">
+        <h2>Market</h2>
+        <p>Sell your harvested flowers, fruits, and vegetables for coins.</p>
+        <div class="inventory-grid" id="inventoryGrid"></div>
+    </div>
+    
+    <div id="achievements" class="container hidden">
+        <h2>Achievements</h2>
+        <p>Track your gardening progress and earn special rewards.</p>
+        <div id="achievementsList" class="achievements-grid">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+    
+    <div id="plantModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 class="modal-title" id="modalTitle">Plant Details</h3>
+            <div class="modal-img" id="modalImg">🌱</div>
+            <p id="modalDesc">This plant needs your care to grow.</p>
+            <div class="modal-actions">
+                <button class="buy-btn" id="waterBtn" onclick="waterPlant(selectedPlot)">Water (💧1)</button>
+                <button class="sell-btn" id="harvestBtn" onclick="harvestPlant(selectedPlot)">Harvest</button>
+                <button class="sell-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-content">
+            <div class="confirm-title" id="confirmTitle">Confirm Action</div>
+            <div class="confirm-message" id="confirmMessage">Are you sure you want to proceed?</div>
+            <div class="confirm-actions">
+                <button class="confirm-btn secondary" id="confirmCancel">Cancel</button>
+                <button class="confirm-btn primary" id="confirmOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="seed-selection-modal hidden" id="seedSelectionModal">
+        <div class="seed-selection-content">
+            <div class="seed-selection-title">Choose a seed to plant</div>
+            <div class="seed-grid" id="seedGrid"></div>
+            <div class="seed-selection-actions">
+                <button class="confirm-btn secondary" onclick="closeSeedSelection()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // --- Game State ---
+        let gameState = {
+            money: 100,
+            seeds: {},
+            water: 10,
+            level: 1,
+            experience: 0,
+            garden: Array(12).fill(null),
+            inventory: {},
+            achievements: {
+                firstPlant: false,
+                firstHarvest: false,
+                fiveHarvests: false,
+                allPlots: false,
+                richFarmer: false
+            },
+            lastWaterTime: Date.now()
+        };
+        
+        let selectedPlot = -1;
+        let selectedSeed = null;
+        
+        // --- Plant Database ---
+        const PLANTS = {
+            tulip: {
+                name: "Tulip",
+                emoji: "🌷",
+                price: 10,
+                sellPrice: 25,
+                growthTime: 60, // seconds for full growth
+                waterNeeds: 3,
+                stages: [
+                    { emoji: "🌱", name: "Tulip Seedling" },
+                    { emoji: "🌿", name: "Tulip Sprout" },
+                    { emoji: "🌷", name: "Blooming Tulip" }
+                ],
+                description: "A beautiful flower that blooms quickly. Good for beginners."
+            },
+            sunflower: {
+                name: "Sunflower",
+                emoji: "🌻",
+                price: 15,
+                sellPrice: 40,
+                growthTime: 120,
+                waterNeeds: 5,
+                stages: [
+                    { emoji: "🌱", name: "Sunflower Seed" },
+                    { emoji: "🌿", name: "Sunflower Sprout" },
+                    { emoji: "🌻", name: "Blooming Sunflower" }
+                ],
+                description: "Tall and cheerful. Takes longer to grow but worth the wait."
+            },
+            tomato: {
+                name: "Tomato",
+                emoji: "🍅",
+                price: 20,
+                sellPrice: 45,
+                growthTime: 180,
+                waterNeeds: 6,
+                stages: [
+                    { emoji: "🌱", name: "Tomato Seedling" },
+                    { emoji: "🌿", name: "Tomato Plant" },
+                    { emoji: "🍅", name: "Ripe Tomatoes" }
+                ],
+                description: "A versatile vegetable that yields multiple harvests."
+            },
+            strawberry: {
+                name: "Strawberry",
+                emoji: "🍓",
+                price: 25,
+                sellPrice: 60,
+                growthTime: 150,
+                waterNeeds: 4,
+                stages: [
+                    { emoji: "🌱", name: "Strawberry Seedling" },
+                    { emoji: "🌿", name: "Strawberry Plant" },
+                    { emoji: "🍓", name: "Ripe Strawberries" }
+                ],
+                description: "Sweet and delicious. A favorite in the market."
+            },
+            rose: {
+                name: "Rose",
+                emoji: "🌹",
+                price: 30,
+                sellPrice: 75,
+                growthTime: 240,
+                waterNeeds: 7,
+                stages: [
+                    { emoji: "🌱", name: "Rose Seedling" },
+                    { emoji: "🌿", name: "Rose Bush" },
+                    { emoji: "🌹", name: "Blooming Rose" }
+                ],
+                description: "Elegant and valuable. Requires patience and care."
+            },
+            cactus: {
+                name: "Cactus",
+                emoji: "🌵",
+                price: 40,
+                sellPrice: 100,
+                growthTime: 300,
+                waterNeeds: 2,
+                stages: [
+                    { emoji: "🌱", name: "Cactus Seedling" },
+                    { emoji: "🌵", name: "Small Cactus" },
+                    { emoji: "🌵", name: "Mature Cactus" }
+                ],
+                description: "Low maintenance and drought resistant. A rare find."
+            }
+        };
+        
+        // --- Game Functions ---
+        function updateStats() {
+            document.getElementById('money').textContent = gameState.money;
+            document.getElementById('seeds').textContent = Object.keys(gameState.seeds).length;
+            document.getElementById('water').textContent = gameState.water;
+            document.getElementById('level').textContent = gameState.level;
+        }
+        
+        function showTab(tabId) {
+            const tabs = ['garden', 'shop', 'market', 'achievements'];
+            tabs.forEach(tab => {
+                document.getElementById(tab).classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+        
+        function initGarden() {
+            const gardenGrid = document.getElementById('gardenGrid');
+            gardenGrid.innerHTML = '';
+            gameState.garden.forEach((plot, index) => {
+                const plotElement = document.createElement('div');
+                plotElement.classList.add('plot');
+                plotElement.dataset.index = index;
+                if (plot) {
+                    plotElement.innerHTML = `
+                        <div class="plot-plant">
+                            <div class="plant-emoji">${plot.emoji}</div>
+                            <div class="growth-indicator">${plot.stage + 1}/${plot.plant.stages.length}</div>
+                        </div>
+                        <div class="water-level" style="width: ${plot.water / plot.plant.waterNeeds * 100}%"></div>
+                    `;
+                    plotElement.onclick = () => openPlantModal(index);
+                } else {
+                    plotElement.innerHTML = '<div class="plot-plant"></div>';
+                    plotElement.onclick = () => plantSeed(index);
+                }
+                gardenGrid.appendChild(plotElement);
+            });
+        }
+        
+        function plantSeed(index) {
+            if (Object.keys(gameState.seeds).length === 0) {
+                showToast('You have no seeds! Visit the Seed Shop to buy some.', 'error');
+                return;
+            }
+            
+            // Show seed selection modal
+            const seedGrid = document.getElementById('seedGrid');
+            seedGrid.innerHTML = '';
+            
+            let hasSeedsToPlant = false;
+            
+            // Create seed options
+            Object.keys(gameState.seeds).forEach(seedType => {
+                if (gameState.seeds[seedType] > 0) {
+                    hasSeedsToPlant = true;
+                    const seedCard = document.createElement('div');
+                    seedCard.className = 'seed-card';
+                    seedCard.innerHTML = `
+                        <div class="seed-card-img">${PLANTS[seedType].emoji}</div>
+                        <div class="seed-card-name">${PLANTS[seedType].name}</div>
+                        <div class="seed-card-count">x${gameState.seeds[seedType]}</div>
+                    `;
+                    seedCard.onclick = () => {
+                        // Plant the selected seed
+                        gameState.seeds[seedType]--;
+                        gameState.garden[index] = {
+                            plant: PLANTS[seedType],
+                            stage: 0,
+                            water: 0,
+                            growthProgress: 0,
+                            plantTime: Date.now()
+                        };
+                        
+                        // Close modal and update garden
+                        document.getElementById('seedSelectionModal').classList.add('hidden');
+                        initGarden();
+                        updateStats();
+                        
+                        // Show planting animation and notification
+                        showToast(`You planted a ${PLANTS[seedType].name}! 🌱`, 'success');
+                        
+                        // Check achievement
+                        if (!gameState.achievements.firstPlant) {
+                            gameState.achievements.firstPlant = true;
+                            showToast('Achievement Unlocked: First Plant! 🏆', 'success', 5000);
+                            initAchievements();
+                        }
+                    };
+                    seedGrid.appendChild(seedCard);
+                }
+            });
+            
+            if (!hasSeedsToPlant) {
+                showToast('You have no seeds! Visit the Seed Shop to buy some.', 'error');
+                return;
+            }
+            
+            // Show the modal
+            document.getElementById('seedSelectionModal').classList.remove('hidden');
+            selectedPlot = index;
+        }
+        
+        function closeSeedSelection() {
+            document.getElementById('seedSelectionModal').classList.add('hidden');
+        }
+        
+        function waterPlant(index) {
+            if (gameState.water <= 0) {
+                showToast('You have no water! Water regenerates over time.', 'error');
+                return;
+            }
+            
+            const plot = gameState.garden[index];
+            if (!plot) return;
+            
+            if (plot.water >= plot.plant.waterNeeds) {
+                showToast('This plant is already fully watered!', 'info');
+                return;
+            }
+            
+            gameState.water--;
+            
+            // Add water drop animation
+            const plotElement = document.querySelector(`.plot[data-index="${index}"]`);
+            const waterDrop = document.createElement('div');
+            waterDrop.className = 'water-drop';
+            waterDrop.textContent = '💧';
+            plotElement.appendChild(waterDrop);
+            setTimeout(() => waterDrop.remove(), 1000);
+            
+            // Update water level
+            plot.water = Math.min(plot.water + 1, plot.plant.waterNeeds);
+            
+            // If fully watered, advance growth
+            if (plot.water === plot.plant.waterNeeds && plot.stage < plot.plant.stages.length - 1) {
+                plot.stage++;
+                plot.water = 0;
+                
+                // Show growth animation
+                const plantEmoji = plotElement.querySelector('.plant-emoji');
+                if (plantEmoji) {
+                    plantEmoji.classList.add('growing');
+                    setTimeout(() => plantEmoji.classList.remove('growing'), 500);
+                }
+                
+                // Check if fully grown
+                if (plot.stage === plot.plant.stages.length - 1) {
+                    showToast(`Your ${plot.plant.name} has fully grown! 🎉`, 'success');
+                } else {
+                    showToast(`Your ${plot.plant.name} grew to stage ${plot.stage + 1}!`, 'success');
+                }
+            } else {
+                showToast(`You watered your ${plot.plant.name}!`, 'success');
+            }
+            
+            initGarden();
+            updateStats();
+            closeModal();
+        }
+        
+        function waterAllPlants() {
+            if (gameState.water > 0) {
+                const plantsToWater = gameState.garden.filter(plot => plot && plot.water < plot.plant.waterNeeds).length;
+                if (plantsToWater > gameState.water) {
+                    alert('You don\'t have enough water! Water your plants one by one.');
+                    return;
+                }
+                gameState.water -= plantsToWater;
+                gameState.garden.forEach(plot => {
+                    if (plot) {
+                        plot.water = Math.min(plot.water + 1, plot.plant.waterNeeds);
+                    }
+                });
+                initGarden();
+                updateStats();
+            } else {
+                alert('You have no water! Water your plants regularly to help them grow.');
+            }
+        }
+        
+        function openPlantModal(index) {
+            const plot = gameState.garden[index];
+            if (plot) {
+                selectedPlot = index;
+                document.getElementById('modalTitle').textContent = plot.plant.name;
+                document.getElementById('modalImg').textContent = plot.plant.emoji;
+                document.getElementById('modalDesc').textContent = plot.plant.description;
+                document.getElementById('waterBtn').style.display = plot.stage < plot.plant.stages.length - 1 ? 'block' : 'none';
+                document.getElementById('harvestBtn').style.display = plot.stage === plot.plant.stages.length - 1 ? 'block' : 'none';
+                document.getElementById('plantModal').classList.remove('hidden');
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('plantModal').classList.add('hidden');
+        }
+        
+        function harvestPlant(index) {
+            const plot = gameState.garden[index];
+            if (!plot || plot.stage < plot.plant.stages.length - 1) return;
+            
+            // Add to inventory
+            gameState.inventory[plot.plant.name] = (gameState.inventory[plot.plant.name] || 0) + 1;
+            
+            // Clear plot
+            gameState.garden[index] = null;
+            
+            // Add experience
+            gameState.experience += 10;
+            if (gameState.experience >= gameState.level * 50) {
+                gameState.level++;
+                gameState.experience = 0;
+                showToast(`Level Up! You're now level ${gameState.level}! 🎖️`, 'success', 5000);
+            }
+            
+            // Check achievements
+            checkAchievements();
+            
+            // Update UI
+            initGarden();
+            updateStats();
+            closeModal();
+            
+            showToast(`You harvested a ${plot.plant.name}! 🌾`, 'success');
+        }
+        
+        function checkAchievements() {
+            if (!gameState.achievements.firstPlant && Object.keys(gameState.seeds).length > 0) {
+                gameState.achievements.firstPlant = true;
+                alert('Achievement Unlocked! First Plant Planted');
+            }
+            if (!gameState.achievements.firstHarvest && Object.keys(gameState.inventory).length > 0) {
+                gameState.achievements.firstHarvest = true;
+                alert('Achievement Unlocked! First Harvest');
+            }
+            if (!gameState.achievements.fiveHarvests && Object.values(gameState.inventory).reduce((a, b) => a + b, 0) >= 5) {
+                gameState.achievements.fiveHarvests = true;
+                alert('Achievement Unlocked! Five Harvests');
+            }
+            if (!gameState.achievements.allPlots && !gameState.garden.some(plot => !plot)) {
+                gameState.achievements.allPlots = true;
+                alert('Achievement Unlocked! All Plots Filled');
+            }
+            if (!gameState.achievements.richFarmer && gameState.money >= 1000) {
+                gameState.achievements.richFarmer = true;
+                alert('Achievement Unlocked! Rich Farmer');
+            }
+        }
+        
+        function initShop() {
+            const shopGrid = document.getElementById('shopGrid');
+            shopGrid.innerHTML = '';
+            Object.keys(PLANTS).forEach(seed => {
+                const plant = PLANTS[seed];
+                const shopItem = document.createElement('div');
+                shopItem.classList.add('shop-item');
+                shopItem.innerHTML = `
+                    <div class="shop-item-img">${plant.emoji}</div>
+                    <div class="shop-item-name">${plant.name}</div>
+                    <div class="shop-item-desc">${plant.description}</div>
+                    <div class="shop-item-price">Price: ${plant.price} 💰</div>
+                    <button class="buy-btn" onclick="buySeed('${seed}')">Buy</button>
+                `;
+                shopGrid.appendChild(shopItem);
+            });
+        }
+        
+        function buySeed(seed) {
+            if (gameState.money >= PLANTS[seed].price) {
+                gameState.money -= PLANTS[seed].price;
+                gameState.seeds[seed] = (gameState.seeds[seed] || 0) + 1;
+                updateStats();
+                alert(`You bought a ${PLANTS[seed].name}!`);
+            } else {
+                alert('Not enough money! Sell some plants to earn more coins.');
+            }
+        }
+        
+        function initMarket() {
+            const inventoryGrid = document.getElementById('inventoryGrid');
+            inventoryGrid.innerHTML = '';
+            Object.keys(gameState.inventory).forEach(item => {
+                const count = gameState.inventory[item];
+                const plant = PLANTS[item];
+                const inventoryItem = document.createElement('div');
+                inventoryItem.classList.add('inventory-item');
+                inventoryItem.innerHTML = `
+                    <div class="inventory-item-img">${plant.emoji}</div>
+                    <div class="inventory-item-name">${plant.name}</div>
+                    <div class="inventory-item-count">${count}</div>
+                    <button class="sell-btn" onclick="sellItem('${item}')">Sell</button>
+                `;
+                inventoryGrid.appendChild(inventoryItem);
+            });
+        }
+        
+        function sellItem(item) {
+            const plant = PLANTS[item];
+            const count = gameState.inventory[item] || 0;
+            if (count > 0) {
+                gameState.inventory[item]--;
+                gameState.money += plant.sellPrice;
+                updateStats();
+                initMarket();
+            }
+        }
+        
+        function initAchievements() {
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            Object.keys(gameState.achievements).forEach(achievement => {
+                const isUnlocked = gameState.achievements[achievement];
+                const achievementItem = document.createElement('div');
+                achievementItem.classList.add('achievement-card');
+                if (isUnlocked) {
+                    achievementItem.classList.add('unlocked');
+                }
+                achievementItem.innerHTML = `
+                    <div class="achievement-icon">${isUnlocked ? '✅' : '❌'}</div>
+                    <div class="achievement-info">
+                        <div class="achievement-name">${achievement.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^\w/, c => c.toUpperCase())}</div>
+                        <div class="achievement-desc">${getAchievementDescription(achievement)}</div>
+                        ${isUnlocked ? `<div class="achievement-reward">Reward: ${getAchievementReward(achievement)}</div>` : ''}
+                    </div>
+                `;
+                achievementsList.appendChild(achievementItem);
+            });
+        }
+        
+        function getAchievementDescription(achievement) {
+            switch (achievement) {
+                case 'firstPlant':
+                    return 'Plant your first seed! 🌱';
+                case 'firstHarvest':
+                    return 'Harvest your first plant! 🌻';
+                case 'fiveHarvests':
+                    return 'Harvest 5 different plants! 🌼';
+                case 'allPlots':
+                    return 'Fill all plots in your garden! 🌿';
+                case 'richFarmer':
+                    return 'Reach 1000 coins! 💰';
+                default:
+                    return 'Achievement description not available';
+            }
+        }
+        
+        function getAchievementReward(achievement) {
+            switch (achievement) {
+                case 'firstPlant':
+                    return '10 coins';
+                case 'firstHarvest':
+                    return '5 coins';
+                case 'fiveHarvests':
+                    return '20 coins';
+                case 'allPlots':
+                    return '50 coins';
+                case 'richFarmer':
+                    return '100 coins';
+                default:
+                    return 'No reward';
+            }
+        }
+        
+        // --- Game Initialization ---
+        updateStats();
+        initGarden();
+        initShop();
+        initMarket();
+        initAchievements();
+        
+        // Improved UI interaction functions
+        
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = '💬';
+            if (type === 'success') icon = '✅';
+            if (type === 'error') icon = '❌';
+            if (type === 'info') icon = 'ℹ️';
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icon}</span>
+                <span>${message}</span>
+                <span class="toast-close" onclick="this.parentNode.classList.remove('show'); setTimeout(() => this.parentNode.remove(), 300)">×</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Show the toast
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // Auto-hide after duration
+            if (duration > 0) {
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => toast.remove(), 300);
+                }, duration);
+            }
+            
+            return toast;
+        }
+        
+        // Confirmation dialog
+        function showConfirm(title, message, onConfirm, onCancel = null) {
+            const modal = document.getElementById('confirmModal');
+            const titleEl = document.getElementById('confirmTitle');
+            const messageEl = document.getElementById('confirmMessage');
+            const okBtn = document.getElementById('confirmOk');
+            const cancelBtn = document.getElementById('confirmCancel');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            // Set up event handlers
+            okBtn.onclick = () => {
+                modal.classList.remove('show');
+                if (onConfirm) onConfirm();
+            };
+            
+            cancelBtn.onclick = () => {
+                modal.classList.remove('show');
+                if (onCancel) onCancel();
+            };
+            
+            // Show modal
+            modal.classList.add('show');
+        }
+    </script>
+</body>
+</html> 

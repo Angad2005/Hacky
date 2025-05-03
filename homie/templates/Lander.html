@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindtric - Expand Your Mind</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        #chatbot-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+
+  #chat-popup {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #chat-header {
+    background: #4A90E2;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  #chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  #chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+
+  #chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  #chat-input button {
+    background: #4A90E2;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .message {
+    margin: 5px 0;
+  }
+
+  .typing {
+  font-style: italic;
+  color: #888;
+  font-size: 18px;  /* ⬅️ Increased font size */
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+
+  .user {
+    text-align: right;
+    color: #333;
+  }
+
+  .bot {
+    text-align: left;
+    color: #4A90E2;
+  }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm fixed w-full z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <span class="text-2xl font-bold gradient-text">Mindtric</span>
+                </div>
+                <div class="hidden md:ml-6 md:flex md:items-center">
+                    <!-- Navigation links removed -->
+                </div>
+                <div class="flex items-center">
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-all">
+                        <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-24 pb-16 md:pt-32 md:pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        Expand Your <span class="gradient-text">Mind</span> with Mindtric
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        Discover powerful tools and techniques to enhance your cognitive abilities, improve focus, and unlock your full mental potential.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="{% url 'login' %}"><button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-md font-medium transition-all">
+                            Get Started
+                        </button></a>
+                        <a href="{% url 'about' %}"><button class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-md font-medium transition-all">
+                            Learn More
+                        </button></a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+                         alt="Person meditating" 
+                         class="rounded-xl shadow-xl w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4">Powerful Features</h2>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Mindtric offers a suite of tools designed to help you train your brain and achieve mental clarity.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all card-hover">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-brain text-indigo-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Music Therapy</h3>
+                    <p class="text-gray-600">
+                        Scientifically-proven exercises to improve memory, attention, and problem-solving skills.
+                    </p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all card-hover">
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Educational Gaming</h3>
+                    <p class="text-gray-600">
+                        Detailed analytics to monitor your improvement and identify areas for growth.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all card-hover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Community Support</h3>
+                    <p class="text-gray-600">
+                        Connect with like-minded individuals to share tips and stay motivated.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Mindtric</h3>
+                    <p class="text-gray-400">
+                        Empowering minds through science-backed cognitive enhancement tools.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Mindtric. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chatbot-btn">💬</button>
+
+<!-- Chat Popup -->
+<div id="chat-popup">
+  <div id="chat-header">AI Chatbot</div>
+  <div id="chat-body"></div>
+  <div id="chat-input">
+    <input type="text" id="user-input" placeholder="Type a message..." />
+    <button onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+    <script>
+        // Simple JavaScript for mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add any interactive functionality here
+            console.log('Mindtric homepage loaded');
+            
+            // Example: Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Login button functionality
+            const loginButton = document.querySelector('nav button');
+            loginButton.addEventListener('click', function() {
+                // Here you would typically redirect to a login page
+                alert('Redirecting to login page...');
+                // window.location.href = '/login';
+            });
+        });
+    </script>
+    <script>
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const chatPopup = document.getElementById('chat-popup');
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+      
+        chatbotBtn.addEventListener('click', () => {
+          chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+        });
+      
+        async function sendMessage() {
+          const message = userInput.value.trim();
+          if (!message) return;
+      
+          appendMessage('user', message);
+          userInput.value = '';
+      
+          // Create bot message with loading animation
+          const botMsg = document.createElement('div');
+          botMsg.className = 'message bot typing';
+          const dots = document.createElement('span');
+          dots.textContent = '';
+          botMsg.appendChild(dots);
+          chatBody.appendChild(botMsg);
+      
+          animateDots(dots);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      
+          try {
+            const response = await fetch('http://localhost:5000/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message })
+            });
+      
+            const data = await response.json();
+            if (data.response) {
+              // Stop loading animation
+              botMsg.classList.remove('typing');
+              botMsg.textContent = '';
+              await typeEffect(botMsg, data.response);
+            } else {
+              botMsg.textContent = "Sorry, I couldn't understand that.";
+            }
+          } catch (error) {
+            botMsg.textContent = "Error connecting to chatbot.";
+          }
+      
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        function appendMessage(sender, text) {
+          const msg = document.createElement('div');
+          msg.className = 'message ' + sender;
+          msg.textContent = text;
+          chatBody.appendChild(msg);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        async function typeEffect(element, text, speed = 20) {
+          for (let i = 0; i < text.length; i++) {
+            element.textContent += text.charAt(i);
+            await new Promise(resolve => setTimeout(resolve, speed));
+          }
+        }
+      
+        function animateDots(element) {
+          let count = 0;
+          const interval = setInterval(() => {
+            if (!element.parentElement.classList.contains('typing')) {
+              clearInterval(interval);
+              return;
+            }
+            element.textContent = '.'.repeat((count % 3) + 1);
+            count++;
+          }, 500);
+        }
+      
+        userInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') sendMessage();
+        });
+      </script>
+      
+</body>
+</html>

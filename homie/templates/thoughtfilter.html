@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Thought Filter: Cognitive Restructuring Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --primary: #2A3A4A;
+            --secondary: #7B8DD8;
+            --accent: #A8DADC;
+            --theme1: linear-gradient(135deg, #e7f0fa 0%, #f7fafd 100%);
+            --theme2: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --theme3: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --theme4: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        }
+        body {
+            margin: 0;
+            background: var(--theme1);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.8s;
+        }
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .score-board {
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .badge {
+            background: #ffe066;
+            color: #2A3A4A;
+            border-radius: 8px;
+            padding: 4px 12px;
+            font-size: 1rem;
+            margin-left: 8px;
+            box-shadow: 0 2px 8px #ffe06655;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .basket {
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            padding: 2rem;
+            min-height: 340px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+        .basket.over {
+            box-shadow: 0 0 0 4px #7B8DD8;
+            border: 2px solid #7B8DD8;
+            background: #e7f0fa;
+        }
+        .basket h2 {
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: #7B8DD8;
+        }
+        .word {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin: 0.5rem;
+            cursor: grab;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            user-select: none;
+            display: inline-block;
+            font-size: 1.2rem;
+        }
+        .word.dragging {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+        #word-pool {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .particle, .star-burst {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1000;
+        }
+        .star-burst {
+            width: 32px;
+            height: 32px;
+            background: none;
+            font-size: 2rem;
+            animation: starPop 0.8s forwards;
+        }
+        @keyframes starPop {
+            0% { opacity: 0; transform: scale(0.3);}
+            40% { opacity: 1; transform: scale(1.2);}
+            100% { opacity: 0; transform: scale(2);}
+        }
+        .mini-game {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255,255,255,0.97);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .zen-garden {
+            position: relative;
+            width: 90%;
+            height: 70vh;
+            background: rgba(168, 218, 220, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            text-align: center;
+            padding: 2rem;
+            margin: 1rem;
+        }
+        .flower {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            animation: flowerGrow 1.5s ease-out forwards;
+            transform-origin: bottom center;
+        }
+        @keyframes flowerGrow {
+            0% { transform: scale(0) translateY(20px); opacity: 0; }
+            80% { transform: scale(1.2) translateY(-10px); opacity: 1; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        @keyframes flowerFade {
+            0% { opacity: 1; transform: scale(1);}
+            100% { opacity: 0; transform: scale(1.5);}
+        }
+        .reward-banner {
+            background: #a8dadc;
+            color: #2A3A4A;
+            font-size: 1.3rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 12px #7B8DD844;
+        }
+        .btn-close-mini {
+            margin-top: 2rem;
+            background: #7B8DD8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        .feedback {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #2A3A4A;
+            min-height: 2.2em;
+            margin-top: 1rem;
+        }
+        .streak {
+            color: #f4a261;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    {% include '0base.html' %}
+    <div class="game-container">
+        <div class="header">
+            <h1>Thought Filter</h1>
+            <div class="score-board">
+                <div>Reframing Points: <span id="points">0</span></div>
+                <div>Next Reward: <span id="next-reward">50</span></div>
+                <div>Streak: <span class="streak" id="streak">0</span></div>
+                <div id="badges"></div>
+            </div>
+        </div>
+        <div class="game-area">
+            <div class="basket" id="helpful-basket">
+                <h2>Helpful Thoughts 🌱</h2>
+            </div>
+            <div class="basket" id="unhelpful-basket">
+                <h2>Unhelpful Thoughts 🍂</h2>
+            </div>
+        </div>
+        <div id="word-pool"></div>
+        <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="mini-game" id="mini-game">
+        <div class="reward-banner">Calming Garden Unlocked! 🌸</div>
+        <div class="zen-garden" id="zen-garden">
+            <div id="garden-menu" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:2;">
+                <span class="garden-item selected" data-type="flower" data-emoji="🌸" style="font-size:2rem;cursor:pointer;">🌸</span>
+                <span class="garden-item" data-type="flower" data-emoji="🌻" style="font-size:2rem;cursor:pointer;">🌻</span>
+                <span class="garden-item" data-type="flower" data-emoji="🌷" style="font-size:2rem;cursor:pointer;">🌷</span>
+                <span class="garden-item" data-type="butterfly" data-emoji="🦋" style="font-size:2rem;cursor:pointer;">🦋</span>
+                <span class="garden-item" data-type="stone" data-emoji="🪨" style="font-size:2rem;cursor:pointer;">🪨</span>
+                <span class="garden-item" data-type="lantern" data-emoji="🏮" style="font-size:2rem;cursor:pointer;">🏮</span>
+            </div>
+            <h2 style="margin-top:0;">Calming Garden</h2>
+            <p>Click an icon, then click anywhere to plant or place.<br>Progress: <span id="garden-progress">0</span></p>
+        </div>
+        <button class="btn-close-mini" onclick="closeMiniGame()">Close Garden</button>
+    </div>
+    <script>
+        const words = [
+            {text: "Failure", type: "unhelpful"},
+            {text: "Growth", type: "helpful"},
+            {text: "Hopeless", type: "unhelpful"},
+            {text: "Progress", type: "helpful"},
+            {text: "Worthless", type: "unhelpful"},
+            {text: "Capable", type: "helpful"},
+            {text: "Anxious", type: "unhelpful"},
+            {text: "Resilient", type: "helpful"},
+            {text: "Mistake", type: "unhelpful"},
+            {text: "Learning", type: "helpful"},
+            {text: "Alone", type: "unhelpful"},
+            {text: "Supported", type: "helpful"},
+            {text: "Broken", type: "unhelpful"},
+            {text: "Healing", type: "helpful"}
+        ];
+
+        const feedbacks = [
+            "Great choice!",
+            "Nice sorting!",
+            "Keep reframing!",
+            "Awesome! That's helpful.",
+            "You're getting the hang of it!",
+            "Way to go!",
+            "Keep up the positive thinking!"
+        ];
+
+        const badgeMilestones = [
+            {points: 50, name: "First 50!", desc: "First 50 points!"},
+            {points: 100, name: "Century!", desc: "100 points!"},
+            {points: 200, name: "Double Century!", desc: "200 points!"},
+            {points: 5, streak: true, name: "Streak Master", desc: "5 in a row!"},
+        ];
+
+        const themes = [
+            "var(--theme1)",
+            "var(--theme2)",
+            "var(--theme3)",
+            "var(--theme4)"
+        ];
+
+        let points = 0;
+        let nextReward = 50;
+        let activeWord = null;
+        let draggingElem = null;
+        let streak = 0;
+        let badges = [];
+        let currentTheme = 0;
+
+        function createWordElement(wordObj) {
+            const word = document.createElement('div');
+            word.className = 'word';
+            word.textContent = wordObj.text;
+            word.draggable = true;
+
+            word.addEventListener('dragstart', (e) => {
+                activeWord = wordObj;
+                draggingElem = word;
+                word.classList.add('dragging');
+            });
+
+            word.addEventListener('dragend', () => {
+                word.classList.remove('dragging');
+                activeWord = null;
+                draggingElem = null;
+            });
+
+            return word;
+        }
+
+        function setupBaskets() {
+            const helpfulBasket = document.getElementById('helpful-basket');
+            const unhelpfulBasket = document.getElementById('unhelpful-basket');
+            [helpfulBasket, unhelpfulBasket].forEach(basket => {
+                basket.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    basket.classList.add('over');
+                });
+                basket.addEventListener('dragleave', () => {
+                    basket.classList.remove('over');
+                });
+                basket.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    basket.classList.remove('over');
+                    if (!activeWord || !draggingElem) return;
+                    const isCorrect =
+                        (basket.id === 'helpful-basket' && activeWord.type === 'helpful') ||
+                        (basket.id === 'unhelpful-basket' && activeWord.type === 'unhelpful');
+                    if (isCorrect) {
+                        points += 10;
+                        streak += 1;
+                        showPositiveFeedback(e.clientX, e.clientY);
+                        showStarBurst(e.clientX, e.clientY);
+                        checkBadges();
+                        if (points >= nextReward) {
+                            showMiniGame();
+                            nextReward += 50;
+                        }
+                        if (points % 100 === 0) {
+                            unlockTheme();
+                        }
+                        updateScore();
+                        draggingElem.remove();
+                        addRandomWord();
+                    } else {
+                        streak = 0;
+                        showNegativeFeedback();
+                        draggingElem.style.animation = "shake 0.3s";
+                        setTimeout(() => draggingElem.style.animation = "", 300);
+                    }
+                    updateStreak();
+                    activeWord = null;
+                    draggingElem = null;
+                });
+            });
+        }
+
+        function addRandomWord() {
+            const pool = document.getElementById('word-pool');
+            if (pool.children.length < 5) {
+                const unused = words.filter(w => ![...pool.children].some(c => c.textContent === w.text));
+                if (unused.length > 0) {
+                    const wordObj = unused[Math.floor(Math.random() * unused.length)];
+                    pool.appendChild(createWordElement(wordObj));
+                }
+            }
+        }
+
+        function showStarBurst(x, y) {
+            const star = document.createElement('div');
+            star.className = 'star-burst';
+            star.style.left = (x-16) + 'px';
+            star.style.top = (y-16) + 'px';
+            star.textContent = '⭐';
+            document.body.appendChild(star);
+            setTimeout(() => star.remove(), 800);
+        }
+
+        function updateScore() {
+            document.getElementById('points').textContent = points;
+            document.getElementById('next-reward').textContent = nextReward;
+        }
+
+        function updateStreak() {
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function showPositiveFeedback(x, y) {
+            const msg = feedbacks[Math.floor(Math.random() * feedbacks.length)];
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.textContent = msg;
+            feedbackDiv.style.color = "#2A3A4A";
+            feedbackDiv.style.opacity = 1;
+            setTimeout(() => {
+                feedbackDiv.style.opacity = 0.5;
+            }, 1200);
+        }
+
+        function showNegativeFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.textContent = "Try again! You can do it.";
+            feedbackDiv.style.color = "#e63946";
+            feedbackDiv.style.opacity = 1;
+            setTimeout(() => {
+                feedbackDiv.style.opacity = 0.5;
+            }, 1200);
+        }
+
+        function checkBadges() {
+            badgeMilestones.forEach(badge => {
+                if (!badges.includes(badge.name)) {
+                    if (badge.streak && streak >= badge.points) {
+                        badges.push(badge.name);
+                        showBadge(badge.name, badge.desc);
+                    } else if (!badge.streak && points >= badge.points) {
+                        badges.push(badge.name);
+                        showBadge(badge.name, badge.desc);
+                    }
+                }
+            });
+            renderBadges();
+        }
+
+        function showBadge(name, desc) {
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.textContent = `🏅 Badge Unlocked: ${desc}`;
+            feedbackDiv.style.color = "#7B8DD8";
+            feedbackDiv.style.opacity = 1;
+            setTimeout(() => {
+                feedbackDiv.style.opacity = 0.5;
+            }, 1600);
+        }
+
+        function renderBadges() {
+            const badgeDiv = document.getElementById('badges');
+            badgeDiv.innerHTML = '';
+            badges.forEach(b => {
+                const badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.textContent = b;
+                badgeDiv.appendChild(badge);
+            });
+        }
+
+        function unlockTheme() {
+            currentTheme = (currentTheme + 1) % themes.length;
+            document.body.style.background = `var(${themes[currentTheme]})`;
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.textContent = "🎉 New background theme unlocked!";
+            feedbackDiv.style.color = "#a8dadc";
+            feedbackDiv.style.opacity = 1;
+            setTimeout(() => {
+                feedbackDiv.style.opacity = 0.5;
+            }, 1800);
+        }
+
+        function showMiniGame() {
+            const miniGame = document.getElementById('mini-game');
+            const garden = miniGame.querySelector('.zen-garden');
+            garden.innerHTML = '<h2>Calming Garden</h2><p>Click anywhere to add flowers</p>';
+            garden.onclick = (e) => {
+                const rect = garden.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                createFlower(x, y);
+            };
+            miniGame.style.display = 'flex';
+        }
+
+        function createFlower(x, y) {
+            const garden = document.querySelector('.zen-garden');
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+            flower.style.left = x + 'px';
+            flower.style.top = y + 'px';
+            flower.textContent = '🌸';
+            flower.style.transform = `rotate(${Math.random() * 15 - 7.5}deg)`;
+            garden.appendChild(flower);
+            setTimeout(() => {
+                flower.style.animation = 'flowerFade 1s forwards';
+                setTimeout(() => flower.remove(), 1000);
+            }, 5000);
+        }
+
+        function closeMiniGame() {
+            document.getElementById('mini-game').style.display = 'none';
+        }
+
+        function initGame() {
+            const pool = document.getElementById('word-pool');
+            pool.innerHTML = '';
+            let used = [];
+            for (let i = 0; i < 6; i++) {
+                let idx;
+                do { idx = Math.floor(Math.random() * words.length); }
+                while (used.includes(idx));
+                used.push(idx);
+                pool.appendChild(createWordElement(words[idx]));
+            }
+            setupBaskets();
+            updateScore();
+            updateStreak();
+            renderBadges();
+        }
+
+        // Initialize game
+        initGame();
+        window.closeMiniGame = closeMiniGame;
+    </script>
+</body>
+</html>

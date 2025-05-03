@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zen Garden Designer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #f6f3e7;
+      font-family: 'Quicksand', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .zen-header {
+      text-align: center;
+      font-size: 2.5rem;
+      margin: 1.2rem 0 0.5rem 0;
+      color: #6e6c5d;
+      letter-spacing: 0.05em;
+    }
+    .zen-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .zen-controls button, .zen-controls select {
+      background: #e3e0d1;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      padding: 0.6rem 1.3rem;
+      margin: 0.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: #6e6c5d;
+    }
+    .zen-controls button:hover, .zen-controls select:hover {
+      background: #f5eac2;
+    }
+    #zen-canvas {
+      display: block;
+      margin: 0 auto;
+      background: #f8f6ed;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(120,120,80,0.08);
+      border: 2px solid #e5e2d5;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .zen-footer {
+      text-align: center;
+      color: #a9a78f;
+      font-size: 1rem;
+      margin: 1.5rem 0 0.5rem 0;
+    }
+    .zen-tip {
+      text-align: center;
+      color: #b5b39b;
+      font-size: 1.1rem;
+      margin: 0.5rem 0 1.2rem 0;
+    }
+  </style>
+</head>
+<body>
+  {% include '0base.html' %}
+  <div class="zen-header">Zen Garden Designer</div>
+  <div class="zen-tip">Drag to rake sand. Select and place stones or plants. Listen and relax. No scores, no timers.</div>
+  <div class="zen-controls">
+    <button onclick="setMode('rake')">Rake Sand</button>
+    <button onclick="setMode('stone')">Place Stone</button>
+    <button onclick="setMode('plant')">Place Plant</button>
+    <button onclick="setMode('erase')">Erase</button>
+    <select id="bgSoundSelect" onchange="changeBgSound()">
+      <option value="birds">Birds</option>
+      <option value="water">Water</option>
+      <option value="wind">Wind</option>
+      <option value="none">Mute</option>
+    </select>
+    <button onclick="saveGarden()">Save</button>
+    <button onclick="loadGarden()">Load</button>
+    <button onclick="clearGarden()">Clear</button>
+  </div>
+  <canvas id="zen-canvas" width="700" height="450"></canvas>
+  <div class="zen-footer">Your garden is your sanctuary. Return anytime to find your calm.</div>
+  <audio id="bgAudio" loop></audio>
+  <script>
+    // --- Core Variables ---
+    const canvas = document.getElementById('zen-canvas');
+    const ctx = canvas.getContext('2d');
+    let mode = 'rake';
+    let drawing = false;
+    let lastX, lastY;
+    let gardenObjects = []; // {type, x, y, [angle]}
+    const stoneImg = new Image();
+    stoneImg.src = 'https://upload.wikimedia.org/wikipedia/commons/3/3a/Stone_icon_2.png';
+    const plantImg = new Image();
+    plantImg.src = 'https://upload.wikimedia.org/wikipedia/commons/5/5d/Leaf_icon_1.png';
+
+    // --- Sound ---
+    const bgAudio = document.getElementById('bgAudio');
+    const bgSounds = {
+      birds: 'https://cdn.pixabay.com/audio/2022/07/26/audio_124bfa8c8f.mp3',
+      water: 'https://cdn.pixabay.com/audio/2022/03/15/audio_115b6c3a1e.mp3',
+      wind:  'https://cdn.pixabay.com/audio/2022/03/15/audio_115b6c3b1a.mp3'
+    };
+    function changeBgSound() {
+      const sel = document.getElementById('bgSoundSelect').value;
+      if (sel === 'none') {
+        bgAudio.pause();
+        return;
+      }
+      bgAudio.src = bgSounds[sel];
+      bgAudio.volume = 0.3;
+      bgAudio.play();
+    }
+    window.onload = () => { changeBgSound(); drawGarden(); };
+
+    // --- Drawing Functions ---
+    function setMode(newMode) {
+      mode = newMode;
+    }
+
+    function drawGarden() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Sand background
+      ctx.fillStyle = '#f8f6ed';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw all objects
+      for (let obj of gardenObjects) {
+        if (obj.type === 'rake') {
+          ctx.strokeStyle = '#d1cdb7';
+          ctx.lineWidth = 7;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          ctx.moveTo(obj.x1, obj.y1);
+          ctx.lineTo(obj.x2, obj.y2);
+          ctx.stroke();
+        }
+        if (obj.type === 'stone') {
+          ctx.save();
+          ctx.translate(obj.x, obj.y);
+          ctx.rotate(obj.angle || 0);
+          ctx.drawImage(stoneImg, -22, -22, 44, 44);
+          ctx.restore();
+        }
+        if (obj.type === 'plant') {
+          ctx.save();
+          ctx.translate(obj.x, obj.y);
+          ctx.rotate(obj.angle || 0);
+          ctx.drawImage(plantImg, -20, -28, 40, 56);
+          ctx.restore();
+        }
+      }
+    }
+
+    // --- Canvas Events ---
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      lastX = e.clientX - rect.left;
+      lastY = e.clientY - rect.top;
+      if (mode === 'rake') {
+        drawing = true;
+      } else if (mode === 'stone' || mode === 'plant') {
+        const angle = Math.random() * Math.PI * 2;
+        gardenObjects.push({
+          type: mode,
+          x: lastX,
+          y: lastY,
+          angle
+        });
+        drawGarden();
+      } else if (mode === 'erase') {
+        // Remove nearest object within 30px
+        let idx = gardenObjects.findIndex(obj =>
+          (obj.type === 'stone' || obj.type === 'plant') &&
+          Math.hypot(obj.x - lastX, obj.y - lastY) < 30
+        );
+        if (idx !== -1) {
+          gardenObjects.splice(idx, 1);
+          drawGarden();
+        }
+      }
+    });
+    canvas.addEventListener('mousemove', (e) => {
+      if (!drawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const newX = e.clientX - rect.left;
+      const newY = e.clientY - rect.top;
+      if (mode === 'rake') {
+        gardenObjects.push({
+          type: 'rake',
+          x1: lastX,
+          y1: lastY,
+          x2: newX,
+          y2: newY
+        });
+        lastX = newX;
+        lastY = newY;
+        drawGarden();
+      }
+    });
+    canvas.addEventListener('mouseup', () => { drawing = false; });
+    canvas.addEventListener('mouseleave', () => { drawing = false; });
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const t = e.touches[0];
+      lastX = t.clientX - rect.left;
+      lastY = t.clientY - rect.top;
+      if (mode === 'rake') {
+        drawing = true;
+      } else if (mode === 'stone' || mode === 'plant') {
+        const angle = Math.random() * Math.PI * 2;
+        gardenObjects.push({
+          type: mode,
+          x: lastX,
+          y: lastY,
+          angle
+        });
+        drawGarden();
+      } else if (mode === 'erase') {
+        let idx = gardenObjects.findIndex(obj =>
+          (obj.type === 'stone' || obj.type === 'plant') &&
+          Math.hypot(obj.x - lastX, obj.y - lastY) < 30
+        );
+        if (idx !== -1) {
+          gardenObjects.splice(idx, 1);
+          drawGarden();
+        }
+      }
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      if (!drawing) return;
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const t = e.touches[0];
+      const newX = t.clientX - rect.left;
+      const newY = t.clientY - rect.top;
+      if (mode === 'rake') {
+        gardenObjects.push({
+          type: 'rake',
+          x1: lastX,
+          y1: lastY,
+          x2: newX,
+          y2: newY
+        });
+        lastX = newX;
+        lastY = newY;
+        drawGarden();
+      }
+    }, {passive: false});
+    canvas.addEventListener('touchend', () => { drawing = false; });
+
+    // --- Save/Load/Clear ---
+    function saveGarden() {
+      localStorage.setItem('zenGardenSave', JSON.stringify(gardenObjects));
+      alert('Garden saved! You can revisit it anytime.');
+    }
+    function loadGarden() {
+      const data = localStorage.getItem('zenGardenSave');
+      if (data) {
+        gardenObjects = JSON.parse(data);
+        drawGarden();
+      } else {
+        alert('No saved garden found.');
+      }
+    }
+    function clearGarden() {
+      if (confirm('Clear your garden? This cannot be undone.')) {
+        gardenObjects = [];
+        drawGarden();
+      }
+    }
+  </script>
+</body>
+</html>
