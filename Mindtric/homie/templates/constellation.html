@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shadow Walk: Emotional Odyssey</title>
+    <style>
+        body {
+            margin: 0;
+            background: #0b0b2d;
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        canvas {
+            background: linear-gradient(45deg, #1a1a2e 0%, #16213e 100%);
+            display: block;
+        }
+        .ui-panel {
+            position: fixed;
+            background: rgba(42, 58, 74, 0.95);
+            border-radius: 12px;
+            padding: 1rem;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        #objectives {
+            top: 20px;
+            left: 20px;
+            width: 260px;
+        }
+        #inventory {
+            bottom: 20px;
+            right: 20px;
+        }
+        .affirmation-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            animation: fadeIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+            pointer-events: none;
+            max-width: 300px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translate(-50%, -50%); }
+            to { opacity: 0; transform: translate(-50%, -40%); }
+        }
+        .objective-item {
+            margin: 5px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            list-style: none;
+            transition: all 0.3s ease;
+        }
+        #shardCount {
+            color: #FFE066;
+            font-weight: bold;
+        }
+        #howToPlayBtn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: #7B8DD8;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #222a44;
+            color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 400px;
+            text-align: left;
+        }
+        .modal-content button {
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: #7B8DD8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    {% include '0base.html' %}
+    <button id="howToPlayBtn">How to Play</button>
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div class="ui-panel" id="objectives">
+            <h3>Current Objective</h3>
+            <div id="currentObjective"></div>
+        </div>
+        <div class="ui-panel" id="inventory">
+            <h3>Light Shards: <span id="shardCount">0</span></h3>
+        </div>
+    </div>
+
+    <div id="howToPlayModal" class="modal">
+        <div class="modal-content">
+            <h2>How to Play</h2>
+            <p>Use arrow keys (← → ↑ ↓) to move your character</p>
+            <p>Collect glowing Light Shards to complete objectives</p>
+            <p>Each game has a different collection target</p>
+            <p>Game gets easier (slower movement) with each restart</p>
+            <button onclick="document.getElementById('howToPlayModal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const OBJECTIVES = [
+            { target: 5, text: "Collect 5 Light Shards" },
+            { target: 8, text: "Gather 8 Luminous Fragments" },
+            { target: 10, text: "Acquire 10 Glowing Orbs" }
+        ];
+
+        class UI {
+            constructor() {
+                this.notificationQueue = [];
+                this.isShowingNotification = false;
+                document.getElementById('howToPlayBtn').addEventListener('click', () => {
+                    document.getElementById('howToPlayModal').style.display = 'flex';
+                });
+            }
+
+            updateGameDisplay(target, collected) {
+                document.getElementById('currentObjective').textContent = target.text;
+                document.getElementById('shardCount').textContent = collected;
+            }
+
+            async processQueue() {
+                while (this.notificationQueue.length > 0) {
+                    this.isShowingNotification = true;
+                    const text = this.notificationQueue.shift();
+                    this.showAffirmation(text);
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+                this.isShowingNotification = false;
+            }
+
+            addToQueue(text) {
+                this.notificationQueue.push(text);
+                if (!this.isShowingNotification) {
+                    this.processQueue();
+                }
+            }
+
+            showAffirmation(text) {
+                const popup = document.createElement('div');
+                popup.className = 'affirmation-popup';
+                popup.textContent = text;
+                document.body.appendChild(popup);
+                setTimeout(() => popup.remove(), 3000);
+            }
+        }
+
+        class Player {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.reset();
+                window.addEventListener('keydown', (e) => this.keys[e.key] = true);
+                window.addEventListener('keyup', (e) => delete this.keys[e.key]);
+            }
+
+            reset() {
+                this.x = this.canvas.width/2;
+                this.y = this.canvas.height/2;
+                this.speed = currentGame.speed;
+                this.keys = {};
+            }
+
+            update() {
+                if (this.keys['ArrowUp']) this.y -= this.speed;
+                if (this.keys['ArrowDown']) this.y += this.speed;
+                if (this.keys['ArrowLeft']) this.x -= this.speed;
+                if (this.keys['ArrowRight']) this.x += this.speed;
+                this.x = Math.max(20, Math.min(this.x, this.canvas.width - 20));
+                this.y = Math.max(20, Math.min(this.y, this.canvas.height - 20));
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 20, 0, Math.PI * 2);
+                ctx.fillStyle = '#A8DACC';
+                ctx.fill();
+            }
+        }
+
+        class Environment {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.shards = [];
+                this.generateWorld();
+            }
+
+            generateWorld() {
+                for (let i = 0; i < 20; i++) {
+                    this.shards.push({
+                        x: Math.random() * (this.canvas.width - 40) + 20,
+                        y: Math.random() * (this.canvas.height - 40) + 20,
+                        active: true
+                    });
+                }
+            }
+
+            update(player) {
+                this.shards.forEach(shard => {
+                    if (shard.active && this.collisionCheck(player, shard)) {
+                        shard.active = false;
+                        currentGame.collected++;
+                        game.ui.addToQueue(this.getRandomAffirmation());
+                        game.ui.updateGameDisplay(currentGame.targetData, currentGame.collected);
+                        if (currentGame.collected >= currentGame.targetData.target) {
+                            game.endGame();
+                        }
+                    }
+                });
+            }
+
+            collisionCheck(player, target) {
+                const dx = player.x - target.x;
+                const dy = player.y - target.y;
+                return Math.sqrt(dx*dx + dy*dy) < 28;
+            }
+
+            getRandomAffirmation() {
+                const affirmations = [
+                    "You are capable of growth",
+                    "Strength comes from within",
+                    "Challenges help you evolve",
+                    "Your feelings are valid",
+                    "Progress takes courage",
+                    "You are worthy of peace",
+                    "Every step matters"
+                ];
+                return affirmations[Math.floor(Math.random() * affirmations.length)];
+            }
+
+            draw(ctx) {
+                this.shards.forEach(shard => {
+                    if (shard.active) {
+                        ctx.beginPath();
+                        ctx.arc(shard.x, shard.y, 8, 0, Math.PI * 2);
+                        ctx.fillStyle = '#FFE066';
+                        ctx.shadowColor = '#FFE066';
+                        ctx.shadowBlur = 15;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                });
+            }
+        }
+
+        let currentGame = {
+            speed: 4,
+            targetData: null,
+            collected: 0,
+            active: true
+        };
+
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ui = new UI();
+                this.startNewGame();
+            }
+
+            startNewGame() {
+                currentGame.targetData = OBJECTIVES[Math.floor(Math.random() * OBJECTIVES.length)];
+                currentGame.collected = 0;
+                currentGame.speed *= 0.9;
+                currentGame.active = true;
+                
+                this.player = new Player(this.canvas);
+                this.environment = new Environment(this.canvas);
+                this.resize();
+                this.ui.updateGameDisplay(currentGame.targetData, currentGame.collected);
+                this.gameLoop();
+            }
+
+            endGame() {
+                currentGame.active = false;
+                this.ui.addToQueue(`Completed! New game starting...`);
+                setTimeout(() => this.startNewGame(), 3000);
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.environment = new Environment(this.canvas);
+                this.player.reset();
+            }
+
+            gameLoop() {
+                if (!currentGame.active) return;
+                
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.player.update();
+                this.environment.update(this.player);
+                this.environment.draw(this.ctx);
+                this.player.draw(this.ctx);
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Initialize game
+        const game = new Game();
+        window.addEventListener('resize', () => game.resize());
+    </script>
+</body>
+</html>

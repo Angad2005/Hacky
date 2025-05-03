@@ -61,6 +61,15 @@ def gentlepuzzle(request):
 def jigsaw(request):
     return render(request, 'jigsaw.html')
 
+def metaphor(request):
+    return render(request, 'metaphor.html')
+
+def constellation(request):
+    return render(request, 'constellation.html')
+
+def shadowwalk(request):
+    return render(request, 'shadowwalk.html')
+
 def Team(request):
     return render(request, 'about2.html')
 
@@ -72,3 +81,24 @@ def Self(request):
 
 def Book(request):
     return render(request, 'book.html')
+
+def growthgarden(request):
+    return render(request, 'growthgarden.html')
+
+def thoughtfilter(request):
+    return render(request, 'thoughtfilter.html')
+
+def bubbleshooter(request):
+    return render(request, 'bubbleshooter.html')
+
+def hexaflow(request):
+    return render(request, 'hexaflow.html')
+
+def colortherapy(request):
+    return render(request, 'colortherapy.html')
+
+def pattern(request):
+    return render(request, 'pattern.html')
+
+def tetris(request):
+    return render(request, 'tetris.html')

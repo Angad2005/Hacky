@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Metaphor Maze: Generative Journeys</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .journal-section {
+            background: rgba(42, 58, 74, 0.9);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        #mazeCanvas {
+            background: rgba(168, 218, 220, 0.1);
+            border-radius: 15px;
+            margin: 2rem 0;
+            display: block;
+            box-shadow: 0 6px 24px #0003;
+        }
+        .boss-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(42, 58, 74, 0.97);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 10;
+            min-width: 340px;
+        }
+        .boss-modal input {
+            font-size: 1.1rem;
+            border-radius: 6px;
+            border: none;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+        }
+        .poem-display {
+            background: linear-gradient(45deg, #7B8DD8 0%, #A8DADC 100%);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1rem 0;
+            color: #2A3A4A;
+        }
+        button {
+            background: #7B8DD8;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-size: 1.1rem;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .maze-title {
+            text-align: center;
+            font-size: 1.4rem;
+            margin: 1rem 0 0.5rem 0;
+            color: #A8DADC;
+            letter-spacing: 0.03em;
+        }
+    </style>
+</head>
+<body>
+    {% include '0base.html' %}
+    <div class="game-container">
+        <h1>Metaphor Maze: Generative Journeys</h1>
+        <div class="journal-section">
+            <h2>Thought Journal</h2>
+            <textarea id="journalEntry" placeholder="Write your thoughts..." rows="3" style="width:100%;font-size:1.1rem;padding:0.7rem;border-radius:8px;"></textarea>
+            <button onclick="generateMaze()">Generate Maze</button>
+        </div>
+        <div class="maze-title" id="mazeTitle"></div>
+        <canvas id="mazeCanvas" width="420" height="420"></canvas>
+        <div class="poem-display" id="poemDisplay"></div>
+        <button onclick="exportStory()">Export Journey</button>
+    </div>
+
+    <!-- Boss Modal -->
+    <div class="boss-modal" id="bossModal">
+        <h2 id="bossName">Shadow of Doubt</h2>
+        <div id="battlePuzzle"></div>
+        <button onclick="solvePuzzle()">Face the Emotion</button>
+    </div>
+
+    <script>
+        // --- Maze and Theme Logic ---
+        const themes = {
+            hope: {
+                title: "Maze of Hope",
+                color: "#ffe066",
+                bg: "#fffbe6",
+                player: "#f4a261",
+                boss: "#7b8dd8"
+            },
+            fear: {
+                title: "Maze of Fear",
+                color: "#457b9d",
+                bg: "#e7f0fa",
+                player: "#e63946",
+                boss: "#22223b"
+            },
+            love: {
+                title: "Maze of Love",
+                color: "#e63946",
+                bg: "#fff0f3",
+                player: "#a8dadc",
+                boss: "#b5838d"
+            },
+            default: {
+                title: "Maze of Reflection",
+                color: "#a8dadc",
+                bg: "#f7fafd",
+                player: "#7b8dd8",
+                boss: "#2a3a4a"
+            }
+        };
+
+        function getTheme(text) {
+            text = text.toLowerCase();
+            if (text.includes("hope")) return themes.hope;
+            if (text.includes("fear")) return themes.fear;
+            if (text.includes("love")) return themes.love;
+            return themes.default;
+        }
+
+        // --- Simple Maze Generator (7x7 grid, always solvable) ---
+        const SIZE = 7;
+        let maze = [];
+        let player = {x: 0, y: 0};
+        let boss = {x: SIZE-1, y: SIZE-1};
+        let theme = themes.default;
+        let mazeTitle = "";
+        let poem = "";
+
+        function generateMaze() {
+            // Theme
+            const journalText = document.getElementById('journalEntry').value;
+            theme = getTheme(journalText);
+            mazeTitle = theme.title;
+            poem = aiPoem(journalText, theme.title);
+
+            // Maze: 0=open, 1=wall. Carve a simple path from (0,0) to (SIZE-1,SIZE-1)
+            maze = Array.from({length: SIZE}, () => Array(SIZE).fill(1));
+            let x=0, y=0;
+            maze[y][x]=0;
+            while (x<SIZE-1 || y<SIZE-1) {
+                if (x<SIZE-1 && (y===SIZE-1 || Math.random()<0.5)) x++;
+                else if (y<SIZE-1) y++;
+                maze[y][x]=0;
+            }
+            // Add a few more open cells for fun
+            for(let i=0;i<10;i++) {
+                let rx = Math.floor(Math.random()*SIZE), ry = Math.floor(Math.random()*SIZE);
+                maze[ry][rx]=0;
+            }
+            player = {x:0, y:0};
+            boss = {x:SIZE-1, y:SIZE-1};
+            drawMaze();
+            document.getElementById('mazeTitle').textContent = mazeTitle;
+            document.getElementById('poemDisplay').textContent = poem;
+        }
+
+        function aiPoem(text, theme) {
+            // Simulated AI poetry
+            if (theme.includes("Hope")) return "Paths unfold in golden light,\nEach step forward banishes night.";
+            if (theme.includes("Fear")) return "Shadows twist and darkness grows,\nYet courage finds the way that glows.";
+            if (theme.includes("Love")) return "Maze of hearts and gentle hue,\nConnection guides each path anew.";
+            return "Winding ways of thought and dream,\nDiscovery in every gleam.";
+        }
+
+        function drawMaze() {
+            const canvas = document.getElementById('mazeCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            // Background
+            ctx.fillStyle = theme.bg;
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            // Draw cells
+            const cell = canvas.width/SIZE;
+            for(let y=0;y<SIZE;y++) for(let x=0;x<SIZE;x++) {
+                if (maze[y][x]===1) {
+                    ctx.fillStyle = "#2a3a4a";
+                    ctx.fillRect(x*cell, y*cell, cell, cell);
+                } else {
+                    ctx.fillStyle = theme.color;
+                    ctx.fillRect(x*cell, y*cell, cell, cell);
+                }
+            }
+            // Boss
+            ctx.fillStyle = theme.boss;
+            ctx.beginPath();
+            ctx.arc(boss.x*cell+cell/2, boss.y*cell+cell/2, cell/2.2, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 1.3rem Quicksand";
+            ctx.textAlign = "center";
+            ctx.fillText("?", boss.x*cell+cell/2, boss.y*cell+cell/2+7);
+
+            // Player
+            ctx.fillStyle = theme.player;
+            ctx.beginPath();
+            ctx.arc(player.x*cell+cell/2, player.y*cell+cell/2, cell/2.5, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // --- Movement ---
+        document.addEventListener('keydown', e => {
+            let moved = false;
+            if (e.key === "ArrowUp" && player.y>0 && maze[player.y-1][player.x]===0) { player.y--; moved=true;}
+            if (e.key === "ArrowDown" && player.y<SIZE-1 && maze[player.y+1][player.x]===0) { player.y++; moved=true;}
+            if (e.key === "ArrowLeft" && player.x>0 && maze[player.y][player.x-1]===0) { player.x--; moved=true;}
+            if (e.key === "ArrowRight" && player.x<SIZE-1 && maze[player.y][player.x+1]===0) { player.x++; moved=true;}
+            if (moved) {
+                drawMaze();
+                if (player.x===boss.x && player.y===boss.y) {
+                    setTimeout(triggerBossBattle, 400);
+                }
+            }
+        });
+
+        // --- Boss Battle Modal ---
+        function triggerBossBattle() {
+            document.getElementById('bossName').textContent = "Emotion Boss: Shadow of Doubt";
+            document.getElementById('battlePuzzle').innerHTML =
+                `<p>Solve the riddle to continue:<br>
+                <i>"What always runs, but never walks, has a mouth but never talks?"</i></p>
+                <input type="text" id="puzzleSolution" placeholder="Your answer">`;
+            document.getElementById('bossModal').style.display = 'block';
+        }
+
+        function solvePuzzle() {
+            const ans = document.getElementById('puzzleSolution').value.trim().toLowerCase();
+            if (ans === "river") {
+                document.getElementById('bossModal').style.display = 'none';
+                setTimeout(() => {
+                    alert("You faced your emotion and found your way through the maze! 🌱");
+                }, 200);
+            } else {
+                alert("Try again! (Hint: It's a part of nature.)");
+            }
+        }
+
+        // --- Export Storybook ---
+        function exportStory() {
+            const storyContent = `
+                <html>
+                    <head><title>My Therapeutic Journey</title></head>
+                    <body style="font-family:Quicksand,sans-serif;background:#f7fafd;color:#2a3a4a;">
+                        <h1>${mazeTitle}</h1>
+                        <h3>My Journal Entry:</h3>
+                        <p>${document.getElementById('journalEntry').value.replace(/\n/g,"<br>")}</p>
+                        <h3>Maze Poem:</h3>
+                        <p>${poem.replace(/\n/g,"<br>")}</p>
+                        <h3>Maze:</h3>
+                        <img src="${document.getElementById('mazeCanvas').toDataURL()}">
+                    </body>
+                </html>
+            `;
+            const blob = new Blob([storyContent], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            window.open(url);
+        }
+
+        // --- Initial Maze ---
+        generateMaze();
+    </script>
+</body>
+</html>
