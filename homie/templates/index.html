@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindrtic - Find Your Peace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-section {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2026&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            transition: all 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        
+        .scrolled .hero-section {
+            height: 40vh;
+            filter: brightness(0.9);
+            background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2026&q=80');
+        }
+        
+        .content-section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.33, 1, 0.68, 1) 0.2s;
+        }
+        
+        .scrolled .content-section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .header {
+            transition: all 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+            transform: translateY(0);
+        }
+        
+        .scrolled .header {
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(8px);
+            transform: translateY(-10px);
+        }
+        
+        .scrolled .header a {
+            color: #333;
+        }
+        
+        .scrolled .header .logo {
+            color: #3b82f6;
+            transform: scale(1.05);
+        }
+        
+        .testimonial-card {
+            transition: all 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .hero-content {
+            transition: all 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+            transform: translateY(0);
+        }
+        
+        .scrolled .hero-content {
+            transform: translateY(-50px);
+        }
+        
+        /* Water ripple animation */
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple 3s infinite;
+            pointer-events: none;
+        }
+        
+        /* Floating animation for elements */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(45deg, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* Water wave effect */
+        .water-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="rgba(255,255,255,0.5)"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" fill="rgba(255,255,255,0.3)"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            animation: wave 15s linear infinite;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        .scrolled .water-wave {
+            opacity: 1;
+        }
+        
+        @keyframes wave {
+            0% {
+                background-position-x: 0;
+            }
+            100% {
+                background-position-x: 1200px;
+            }
+        }
+        #chatbot-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4A90E2;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+
+  #chat-popup {
+    display: none;
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #chat-header {
+    background: #4A90E2;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  #chat-body {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  #chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+
+  #chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  #chat-input button {
+    background: #4A90E2;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .typing {
+  font-style: italic;
+  color: #888;
+  font-size: 18px;  /* ⬅️ Increased font size */
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+
+  .message {
+    margin: 5px 0;
+  }
+
+  .user {
+    text-align: right;
+    color: #333;
+  }
+
+  .bot {
+    text-align: left;
+    color: #4A90E2;
+  }
+    </style>
+</head>
+<body class="font-sans">
+    <div class="relative">
+        <!-- Header -->
+        <header class="header fixed w-full z-50 py-4 px-6 md:px-12 flex justify-between items-center">
+            <div class="logo text-2xl font-bold text-white transition-transform">Mindrtic</div>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-8">
+                    <li><a href="#" class="text-white hover:text-blue-200 transition">Home</a></li>
+                    <li><a href="{% url 'Music' %}" class="text-white hover:text-blue-200 transition">Music</a></li>
+                    <li><a href="{% url 'games_index' %}" class="text-white hover:text-blue-200 transition">Games</a></li>
+                    <li><a href="{% url 'Book' %}" class="text-white hover:text-blue-200 transition">Library</a></li>
+                    <li><a href="{% url 'Self' %}" class="text-white hover:text-blue-200 transition">Article</a></li>
+                    <li><form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-light" style="
+                        color: white;
+                        background-color: #007bff;
+                        padding: 8px 16px;
+                        border-radius: 4px;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        display: inline-block;
+                        margin: 5px 0;
+                      "
+                      onmouseover="this.style.backgroundColor='#0056b3'"
+                      onmouseout="this.style.backgroundColor='#007bff'">Logout</button>
+                    </form>
+                        
+                      </li>
+                </ul>
+            </nav>
+            <button class="md:hidden text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-section flex items-center justify-center relative overflow-hidden">
+            <div class="hero-content text-center px-6 md:px-0">
+                <h1 class="text-white text-4xl md:text-6xl font-light mb-6 floating">"Being challenged in life is inevitable, being defeated is optional."</h1>
+                <p class="text-white text-xl md:text-2xl max-w-2xl mx-auto mb-8">— Roger Crawford</p>
+              
+            </div>
+            
+            <!-- Water ripple elements -->
+            <div class="ripple" style="width: 100px; height: 100px; top: 30%; left: 20%;"></div>
+            <div class="ripple" style="width: 150px; height: 150px; top: 40%; left: 70%; animation-delay: 0.5s;"></div>
+            <div class="ripple" style="width: 80px; height: 80px; top: 60%; left: 30%; animation-delay: 1s;"></div>
+            
+            <!-- Water wave effect -->
+            <div class="water-wave"></div>
+        </section>
+
+        <!-- Content Section -->
+        <div class="content-section bg-white">
+            <!-- About Section -->
+            <section class="py-16 px-6 md:px-12 max-w-6xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                    <span class="gradient-text">Welcome to Mindrtic</span>
+                </h2>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <p class="text-lg text-gray-600 mb-6">
+                            At Mindrtic, we believe in the fluid, ever-changing nature of mindfulness. Like water adapting to its container, we help you find peace that flows with your life's circumstances.
+                        </p>
+                        <p class="text-lg text-gray-600 mb-6">
+                            Our team of meditation teachers and wellness experts have created a platform that brings the calming essence of water to your mindfulness practice, helping you navigate life's currents with grace.
+                        </p>
+                        <a href="{% url 'Team' %}"><button class="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-6 py-3 rounded-full font-semibold hover:opacity-90 transition transform hover:scale-105 shadow-lg">
+                            Meet Our Team
+                        </button></a>
+                    </div>
+                    <div class="rounded-xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
+                        <img src="https://images.unsplash.com/photo-1518481852452-9415b262eba4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Water meditation" class="w-full h-auto">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-16 bg-blue-50">
+                <div class="max-w-6xl mx-auto px-6 md:px-12">
+                    <h3 class="text-2xl md:text-3xl font-bold mb-12 text-center text-gray-800">
+                        <span class="gradient-text">Our Well being Programs</span>
+                    </h3>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Feature 1 -->
+                        <a href="{% url 'Self' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 mx-auto">
+                                <i class="fas fa-water text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-3">Guides</h4>
+                           
+                        </div></a>
+                        
+                        <!-- Feature 2 -->
+                        <a href="{% url 'Music' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 mx-auto">
+                                <i class="fas fa-wind text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-3">Music</h4>
+                          
+                        </div></a>
+                        
+                        <!-- Feature 3 -->
+                        <a href="{% url 'games_index' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 mx-auto">
+                                <i class="fas fa-umbrella-beach text-2xl"></i>
+                            </div>
+                            <h4 class="text-xl font-semibold text-center mb-3">Educational games </h4>
+                          
+                        </div></a>
+                    </div>
+                </div>
+            </section>
+
+            <button id="chatbot-btn">💬</button>
+
+            <!-- Chat Popup -->
+            <div id="chat-popup">
+              <div id="chat-header">AI Chatbot</div>
+              <div id="chat-body"></div>
+              <div id="chat-input">
+                <input type="text" id="user-input" placeholder="Type a message..." />
+                <button onclick="sendMessage()">➤</button>
+              </div>
+            </div>  
+               
+             
+
+        <!-- Footer -->
+        <footer class="bg-blue-900 text-white py-12 px-6 md:px-12">
+            <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Mindrtic</h3>
+                    <p class="text-blue-200">Helping you find peace that flows like water through mindfulness and meditation.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Home</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Music</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Games</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Guides</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Research</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Podcast</a></li>
+                        <li><a href="#" class="text-blue-200 hover:text-white transition">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-blue-200 hover:text-white transition text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-blue-200 hover:text-white transition text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-blue-200 hover:text-white transition text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-blue-200 hover:text-white transition text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <p class="text-blue-200 mt-4">Subscribe to our newsletter</p>
+                    <div class="mt-2 flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l text-gray-800 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button class="bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-2 rounded-r hover:opacity-90 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-6xl mx-auto border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
+                <p>&copy; 2023 Mindrtic. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const chatbotBtn = document.getElementById('chatbot-btn');
+        const chatPopup = document.getElementById('chat-popup');
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+      
+        chatbotBtn.addEventListener('click', () => {
+          chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+        });
+      
+        async function sendMessage() {
+          const message = userInput.value.trim();
+          if (!message) return;
+      
+          appendMessage('user', message);
+          userInput.value = '';
+      
+          // Create bot message with loading animation
+          const botMsg = document.createElement('div');
+          botMsg.className = 'message bot typing';
+          const dots = document.createElement('span');
+          dots.textContent = '';
+          botMsg.appendChild(dots);
+          chatBody.appendChild(botMsg);
+      
+          animateDots(dots);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      
+          try {
+            const response = await fetch('http://localhost:5000/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message })
+            });
+      
+            const data = await response.json();
+            if (data.response) {
+              // Stop loading animation
+              botMsg.classList.remove('typing');
+              botMsg.textContent = '';
+              await typeEffect(botMsg, data.response);
+            } else {
+              botMsg.textContent = "Sorry, I couldn't understand that.";
+            }
+          } catch (error) {
+            botMsg.textContent = "Error connecting to chatbot.";
+          }
+      
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        function appendMessage(sender, text) {
+          const msg = document.createElement('div');
+          msg.className = 'message ' + sender;
+          msg.textContent = text;
+          chatBody.appendChild(msg);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }
+      
+        async function typeEffect(element, text, speed = 20) {
+          for (let i = 0; i < text.length; i++) {
+            element.textContent += text.charAt(i);
+            await new Promise(resolve => setTimeout(resolve, speed));
+          }
+        }
+      
+        function animateDots(element) {
+          let count = 0;
+          const interval = setInterval(() => {
+            if (!element.parentElement.classList.contains('typing')) {
+              clearInterval(interval);
+              return;
+            }
+            element.textContent = '.'.repeat((count % 3) + 1);
+            count++;
+          }, 500);
+        }
+      
+        userInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') sendMessage();
+        });
+      </script>
+      
+
+    <script>
+        // Enhanced scroll effect with water theme
+        window.addEventListener('scroll', function() {
+            const scrollPosition = window.scrollY;
+            const body = document.body;
+            
+            if (scrollPosition > 50) {
+                body.classList.add('scrolled');
+            } else {
+                body.classList.remove('scrolled');
+            }
+            
+            // Parallax effect for hero content
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translateY(${scrollPosition * 0.3}px)`;
+            }
+        });
+
+        // Create ripple effect on click
+        document.querySelector('.hero-section').addEventListener('click', function(e) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = `${e.clientX - 50}px`;
+            ripple.style.top = `${e.clientY - 50}px`;
+            this.appendChild(ripple);
+            
+            // Remove ripple after animation completes
+            setTimeout(() => {
+                ripple.remove();
+            }, 3000);
+        });
+
+        // Mobile menu toggle (placeholder - would need actual implementation)
+        document.querySelector('.md\\:hidden').addEventListener('click', function() {
+            alert('Mobile menu would open here in a full implementation');
+        });
+        
+        // Add floating animation to multiple elements
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingElements = document.querySelectorAll('.floating');
+            floatingElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.2}s`;
+            });
+            
+            // Create initial ripples
+            const heroSection = document.querySelector('.hero-section');
+            for (let i = 0; i < 3; i++) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = `${Math.random() * 80 + 10}%`;
+                ripple.style.top = `${Math.random() * 80 + 10}%`;
+                ripple.style.animationDelay = `${i * 0.5}s`;
+                heroSection.appendChild(ripple);
+            }
+        });
+    </script>
+</body>
+</html>

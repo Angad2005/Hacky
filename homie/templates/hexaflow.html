@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HexaFlow Trance</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.5em;
+      text-align: center;
+      animation: pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.7; }
+    }
+
+    .hexagon-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      grid-gap: 15px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .hex {
+      width: 80px;
+      height: 92px;
+      background: #66cdaa;
+      clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+      transition: transform 0.2s, background 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .hex.glow {
+      background: #b0e0e6;
+      box-shadow: 0 0 20px #00ffff;
+      transform: scale(1.2);
+    }
+
+    .scoreboard {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .breathing-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.15);
+      animation: breathe 6s ease-in-out infinite;
+      margin-top: 20px;
+    }
+
+    @keyframes breathe {
+      0% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+
+    footer {
+      font-size: 0.9em;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  {% include '0base.html' %}
+  <div class="container">
+    <h1>HexaFlow Trance</h1>
+
+    <div class="hexagon-grid" id="grid">
+      <!-- 12 hexagons -->
+      <div class="hex" data-id="0"></div>
+      <div class="hex" data-id="1"></div>
+      <div class="hex" data-id="2"></div>
+      <div class="hex" data-id="3"></div>
+      <div class="hex" data-id="4"></div>
+      <div class="hex" data-id="5"></div>
+      <div class="hex" data-id="6"></div>
+      <div class="hex" data-id="7"></div>
+      <div class="hex" data-id="8"></div>
+      <div class="hex" data-id="9"></div>
+      <div class="hex" data-id="10"></div>
+      <div class="hex" data-id="11"></div>
+    </div>
+
+    <div class="scoreboard">
+      <div>Flow: <span id="score">0</span></div>
+      <div>Time: <span id="timer">0s</span></div>
+    </div>
+
+    <div class="breathing-circle"></div>
+
+    <footer>Tap glowing hexagons to build flow. Breathe in sync. Relax.</footer>
+  </div>
+
+  <script>
+    const hexes = document.querySelectorAll(".hex");
+    const scoreEl = document.getElementById("score");
+    const timerEl = document.getElementById("timer");
+
+    let score = 0;
+    let currentGlow = -1;
+    let time = 0;
+
+    // Highlight random hexagon every second
+    setInterval(() => {
+      if (currentGlow !== -1) {
+        hexes[currentGlow].classList.remove("glow");
+      }
+      currentGlow = Math.floor(Math.random() * hexes.length);
+      hexes[currentGlow].classList.add("glow");
+    }, 1200);
+
+    // Timer
+    setInterval(() => {
+      time++;
+      timerEl.textContent = `${time}s`;
+    }, 1000);
+
+    // Click handling
+    hexes.forEach((hex, index) => {
+      hex.addEventListener("click", () => {
+        if (index === currentGlow) {
+          score += 10;
+          hex.classList.remove("glow");
+          currentGlow = -1;
+        } else {
+          score = Math.max(0, score - 5);
+        }
+        scoreEl.textContent = score;
+      });
+    });
+  </script>
+</body>
+</html>

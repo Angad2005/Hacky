@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gentle Puzzle Flow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap');
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Quicksand', Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4fa 0%, #e7f7f7 100%);
+      color: #2a3a4a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      color: #385a7c;
+      margin: 2rem 0 0.3rem 0;
+      text-align: center;
+    }
+    .desc {
+      color: #456;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+    .level-select {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .level-btn {
+      background: #b9d6e7;
+      border: none;
+      border-radius: 12px;
+      padding: 1.1rem 2.1rem;
+      font-size: 1.1rem;
+      color: #385a7c;
+      box-shadow: 0 2px 10px #c5d6e7a0;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      font-weight: 700;
+      outline: none;
+    }
+    .level-btn:hover, .level-btn.selected {
+      background: #385a7c;
+      color: #fff;
+    }
+    .puzzle-area {
+      width: 350px;
+      min-height: 350px;
+      background: #f7fbff;
+      border-radius: 22px;
+      box-shadow: 0 4px 24px #b9d6e7a0;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      transition: box-shadow 0.3s;
+    }
+    .feedback {
+      text-align: center;
+      font-size: 1.3rem;
+      color: #5fa36c;
+      margin: 0.8rem 0 0.5rem 0;
+      min-height: 2rem;
+      transition: color 0.3s;
+    }
+    .nav-controls {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+    button {
+      background: #385a7c;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.7rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #2a3a4a;
+    }
+    .hidden {
+      display: none !important;
+    }
+
+    /* Sliding tile puzzle */
+    .slide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 64px);
+      grid-template-rows: repeat(3, 64px);
+      gap: 8px;
+      margin: 1.5rem auto;
+    }
+    .slide-tile {
+      width: 64px;
+      height: 64px;
+      background: #b9d6e7;
+      border-radius: 12px;
+      font-size: 2rem;
+      color: #385a7c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 1px 4px #b9d6e7a0;
+      transition: background 0.2s, color 0.2s;
+      user-select: none;
+      outline: none;
+    }
+    .slide-tile.empty {
+      background: #f7fbff;
+      cursor: default;
+      box-shadow: none;
+    }
+    /* Connect-the-stars puzzle */
+    .constellation-canvas {
+      background: #e7f7f7;
+      border-radius: 14px;
+      width: 320px;
+      height: 320px;
+      box-shadow: 0 2px 10px #b9d6e7a0;
+      margin: 1.2rem auto;
+      display: block;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body>
+  {% include '0base.html' %}
+  <header>Gentle Puzzle Flow</header>
+  <div class="desc">
+    Untimed, calming puzzles to soothe your mind.<br>
+    No pressure, just gentle focus and flow. Choose your puzzle:
+  </div>
+  <div class="level-select" id="levelSelect"></div>
+  <div class="puzzle-area" id="puzzleArea"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="nav-controls">
+    <button id="backBtn" onclick="showLevelSelect()">Back to Levels</button>
+    <button id="nextBtn" class="hidden" onclick="nextLevel()">Next Level</button>
+    <button id="restartBtn" class="hidden" onclick="restartLevel()">Restart</button>
+  </div>
+  <script>
+    // --- Puzzle Modules ---
+    // 1. Sliding Tile Puzzle (3x3, easy)
+    const slidingTileLevels = [
+      {
+        name: "Sliding Tiles 1",
+        type: "sliding",
+        grid: [1,2,3,4,5,6,7,8,0] // 0 is empty
+      },
+      {
+        name: "Sliding Tiles 2",
+        type: "sliding",
+        grid: [1,2,3,4,5,6,0,7,8]
+      }
+    ];
+    // 2. Connect the Stars (constellation)
+    const connectStarsLevels = [
+      {
+        name: "Constellation 1",
+        type: "constellation",
+        points: [
+          {x:80,y:60}, {x:240,y:60}, {x:160,y:160}, {x:80,y:260}, {x:240,y:260}
+        ],
+        solution: [[0,1],[1,2],[2,3],[2,4]]
+      },
+      {
+        name: "Constellation 2",
+        type: "constellation",
+        points: [
+          {x:60,y:100}, {x:160,y:40}, {x:260,y:100}, {x:210,y:220}, {x:110,y:220}
+        ],
+        solution: [[0,1],[1,2],[2,3],[3,4],[4,0]]
+      }
+    ];
+
+    // --- Level List ---
+    const levels = [
+      ...slidingTileLevels,
+      ...connectStarsLevels
+    ];
+
+    let currentLevel = null;
+    let currentLevelIdx = null;
+
+    // --- UI Elements ---
+    const levelSelect = document.getElementById('levelSelect');
+    const puzzleArea = document.getElementById('puzzleArea');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('nextBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const backBtn = document.getElementById('backBtn');
+
+    // --- Level Select UI ---
+    function showLevelSelect() {
+      puzzleArea.innerHTML = '';
+      feedback.textContent = '';
+      nextBtn.classList.add('hidden');
+      restartBtn.classList.add('hidden');
+      backBtn.classList.add('hidden');
+      levelSelect.innerHTML = '';
+      levels.forEach((lvl, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'level-btn';
+        btn.textContent = lvl.name;
+        btn.onclick = () => startLevel(i);
+        levelSelect.appendChild(btn);
+      });
+    }
+
+    // --- Puzzle Loader ---
+    function startLevel(idx) {
+      currentLevelIdx = idx;
+      currentLevel = levels[idx];
+      levelSelect.innerHTML = '';
+      feedback.textContent = '';
+      nextBtn.classList.add('hidden');
+      restartBtn.classList.remove('hidden');
+      backBtn.classList.remove('hidden');
+      if(currentLevel.type === 'sliding') {
+        loadSlidingPuzzle(currentLevel);
+      } else if(currentLevel.type === 'constellation') {
+        loadConstellationPuzzle(currentLevel);
+      }
+    }
+
+    // --- Sliding Tile Puzzle ---
+    function loadSlidingPuzzle(level) {
+      puzzleArea.innerHTML = '';
+      let grid = [...level.grid];
+      if(!isSolvable(grid)) grid = shuffleGrid(grid);
+      const gridDiv = document.createElement('div');
+      gridDiv.className = 'slide-grid';
+      puzzleArea.appendChild(gridDiv);
+
+      function render() {
+        gridDiv.innerHTML = '';
+        grid.forEach((val, idx) => {
+          const tile = document.createElement('div');
+          tile.className = 'slide-tile' + (val === 0 ? ' empty' : '');
+          tile.tabIndex = val === 0 ? -1 : 0;
+          tile.textContent = val === 0 ? '' : val;
+          tile.onclick = () => moveTile(idx);
+          tile.onkeydown = e => {
+            if((e.key === 'Enter' || e.key === ' ') && val !== 0) moveTile(idx);
+          };
+          gridDiv.appendChild(tile);
+        });
+      }
+      function moveTile(idx) {
+        const emptyIdx = grid.indexOf(0);
+        if(isAdjacent(idx, emptyIdx)) {
+          [grid[idx], grid[emptyIdx]] = [grid[emptyIdx], grid[idx]];
+          render();
+          if(isSolved(grid)) {
+            feedback.textContent = "🌸 Well done! Puzzle complete.";
+            nextBtn.classList.remove('hidden');
+            restartBtn.classList.add('hidden');
+            gentlePulse(gridDiv);
+          }
+        }
+      }
+      render();
+    }
+    function isAdjacent(i, j) {
+      const x1 = i%3, y1 = Math.floor(i/3);
+      const x2 = j%3, y2 = Math.floor(j/3);
+      return (Math.abs(x1-x2)+Math.abs(y1-y2)) === 1;
+    }
+    function isSolved(grid) {
+      for(let i=0;i<8;i++) if(grid[i]!==i+1) return false;
+      return grid[8]===0;
+    }
+    function isSolvable(grid) {
+      let inv = 0;
+      for(let i=0;i<grid.length;i++)
+        for(let j=i+1;j<grid.length;j++)
+          if(grid[i]&&grid[j]&&grid[i]>grid[j]) inv++;
+      return inv%2===0;
+    }
+    function shuffleGrid(grid) {
+      let arr = [...grid];
+      do {
+        for(let i=arr.length-1;i>0;i--) {
+          const j = Math.floor(Math.random()*(i+1));
+          [arr[i],arr[j]] = [arr[j],arr[i]];
+        }
+      } while(!isSolvable(arr) || isSolved(arr));
+      return arr;
+    }
+    function gentlePulse(el) {
+      el.style.boxShadow = '0 0 40px #aee1d8';
+      setTimeout(()=>el.style.boxShadow='',700);
+    }
+
+    // --- Connect the Stars Puzzle ---
+    function loadConstellationPuzzle(level) {
+      puzzleArea.innerHTML = '';
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 320;
+      canvas.className = 'constellation-canvas';
+      puzzleArea.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      let lines = [];
+      let dragging = null;
+
+      function draw() {
+        ctx.clearRect(0,0,320,320);
+        // Draw lines
+        ctx.strokeStyle = "#7b8dd8";
+        ctx.lineWidth = 4;
+        lines.forEach(l => {
+          ctx.beginPath();
+          ctx.moveTo(level.points[l[0]].x, level.points[l[0]].y);
+          ctx.lineTo(level.points[l[1]].x, level.points[l[1]].y);
+          ctx.stroke();
+        });
+        // Draw points
+        level.points.forEach((pt,i) => {
+          ctx.beginPath();
+          ctx.arc(pt.x,pt.y,14,0,2*Math.PI);
+          ctx.fillStyle = "#fff";
+          ctx.fill();
+          ctx.strokeStyle = "#385a7c";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.fillStyle = "#385a7c";
+          ctx.font = "bold 1rem Quicksand";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(i+1,pt.x,pt.y);
+        });
+      }
+      draw();
+
+      function getPointAt(x,y) {
+        return level.points.findIndex(pt => Math.hypot(pt.x-x,pt.y-y)<18);
+      }
+      canvas.onmousedown = e => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX-rect.left, y = e.clientY-rect.top;
+        const idx = getPointAt(x,y);
+        if(idx !== -1) dragging = idx;
+      };
+      canvas.onmouseup = e => {
+        if(dragging===null) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX-rect.left, y = e.clientY-rect.top;
+        const idx = getPointAt(x,y);
+        if(idx !== -1 && idx !== dragging) {
+          let exists = lines.some(l => (l[0]===dragging&&l[1]===idx)||(l[1]===dragging&&l[0]===idx));
+          if(!exists) lines.push([dragging,idx]);
+          draw();
+          if(isConstellationSolved(level, lines)) {
+            feedback.textContent = "⭐ Beautiful! Constellation complete.";
+            nextBtn.classList.remove('hidden');
+            restartBtn.classList.add('hidden');
+            gentlePulse(canvas);
+          }
+        }
+        dragging = null;
+      };
+      // Touch support
+      canvas.ontouchstart = e => {
+        const rect = canvas.getBoundingClientRect();
+        const t = e.touches[0];
+        const x = t.clientX-rect.left, y = t.clientY-rect.top;
+        const idx = getPointAt(x,y);
+        if(idx !== -1) dragging = idx;
+      };
+      canvas.ontouchend = e => {
+        if(dragging===null) return;
+        const rect = canvas.getBoundingClientRect();
+        const t = e.changedTouches[0];
+        const x = t.clientX-rect.left, y = t.clientY-rect.top;
+        const idx = getPointAt(x,y);
+        if(idx !== -1 && idx !== dragging) {
+          let exists = lines.some(l => (l[0]===dragging&&l[1]===idx)||(l[1]===dragging&&l[0]===idx));
+          if(!exists) lines.push([dragging,idx]);
+          draw();
+          if(isConstellationSolved(level, lines)) {
+            feedback.textContent = "⭐ Beautiful! Constellation complete.";
+            nextBtn.classList.remove('hidden');
+            restartBtn.classList.add('hidden');
+            gentlePulse(canvas);
+          }
+        }
+        dragging = null;
+      };
+      restartBtn.onclick = () => {
+        lines = [];
+        feedback.textContent = '';
+        nextBtn.classList.add('hidden');
+        restartBtn.classList.remove('hidden');
+        draw();
+      };
+    }
+    function isConstellationSolved(level, lines) {
+      if(lines.length !== level.solution.length) return false;
+      let sol = level.solution.map(l => l.slice().sort().join('-')).sort();
+      let user = lines.map(l => l.slice().sort().join('-')).sort();
+      return JSON.stringify(sol) === JSON.stringify(user);
+    }
+
+    // --- Navigation ---
+    function nextLevel() {
+      if(currentLevelIdx!==null && currentLevelIdx<levels.length-1) {
+        startLevel(currentLevelIdx+1);
+      } else {
+        feedback.textContent = "✨ You've completed all available puzzles!";
+        nextBtn.classList.add('hidden');
+        restartBtn.classList.add('hidden');
+      }
+    }
+    function restartLevel() {
+      if(currentLevel) startLevel(currentLevelIdx);
+    }
+
+    // --- Init ---
+    showLevelSelect();
+  </script>
+</body>
+</html>
