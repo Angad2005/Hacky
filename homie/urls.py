@@ -44,5 +44,5 @@ urlpatterns = [
     path('colortherapy/', colortherapy, name='colortherapy'),
     path('pattern/', pattern, name='pattern'),
     path('tetris/', tetris, name='tetris'),
-
+#something
 ]

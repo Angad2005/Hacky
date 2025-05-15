@@ -77,10 +77,10 @@ def Music(request):
     return render(request, 'Music.html')
 
 def Self(request):
-    return render(request, 'self_guide.html')
+    return render(request, 'self_guide2.html')
 
 def Book(request):
-    return render(request, 'book.html')
+    return render(request, 'buddy.html')
 
 def growthgarden(request):
     return render(request, 'growthgarden.html')
@@ -102,3 +102,30 @@ def pattern(request):
 
 def tetris(request):
     return render(request, 'tetris.html')
+
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+def chat_api(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_input = data.get('message', '')
+
+        url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent'
+        api_key = 'YOUR_SECRET_KEY'
+
+        headers = { 'Content-Type': 'application/json' }
+        payload = {
+            "contents": [
+                {"parts": [{"text": "You are a helpful AI assistant named Best Buddy."}]},
+                {"parts": [{"text": user_input}]}
+            ]
+        }
+
+        response = requests.post(f"{url}?key={api_key}", headers=headers, json=payload)
+        result = response.json()
+        reply = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', 'Sorry, no reply.')
+        return JsonResponse({ "reply": reply })
