@@ -94,6 +94,25 @@ header h1 {
     border-radius: 5px;
     cursor: pointer;
 }
+.home-button {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background-color: #800080;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 1001;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+    background-color: #4B0082;
+}
+
 
 @media (max-width: 768px) {
     .cards {
@@ -106,10 +125,115 @@ header h1 {
         max-width: 90%;
     }
 }
+/* Chatbot Styles */
+#chatbot-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
 
+#chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+#chat-header {
+  background: #4A90E2;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+  background: #f5f5f5;
+}
+
+#chat-input {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+#chat-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+#chat-input button {
+  background: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  line-height: 1.4;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+.user {
+  background: #e3e3e3;
+  color: #333;
+  border-radius: 15px 4px 15px 15px;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #d7eefc;
+  color: #4A90E2;
+  border-radius: 4px 15px 15px 15px;
+  align-self: flex-start;
+}
+
+.typing {
+  font-style: italic;
+  color: #888;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
     </style>
 </head>
 <body>
+
+    <a href="{% url 'inder' %}" class="home-button">🏠 Home</a>
+
     <header>
         <h1>🧠 Self-Help Guide for Mental Wellness</h1>
     </header>
@@ -117,75 +241,190 @@ header h1 {
     <section class="category">
         <h2>For OCD</h2>
         <div class="cards">
-            <div class="card" onclick="showPopup('https://www.mind.org.uk/information-support/types-of-mental-health-problems/obsessive-compulsive-disorder-ocd/self-care-for-ocd/?utm_source=chatgpt.com')">Mind: Self-care for Obsessive-Compulsive Disorder (OCD)</div>
-            <div class="card" onclick="showPopup('https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/obsessive-compulsive-disorder-ocd-self-help-guide/?utm_source=chatgpt.com')">NHS Inform: Obsessive-Compulsive Disorder (OCD) Self-help Guide</div>
-            <div class="card" onclick="showPopup('https://www.ocduk.org/overcoming-ocd/self-help/?utm_source=chatgpt.com')">International OCD Foundation: Self-Directed Treatment for OCD</div>
-            <div class="card" onclick="showPopup('https://www.helpguide.org/mental-health/anxiety/obssessive-compulsive-disorder-ocd?utm_source=chatgpt.com')">Anxiety Canada: Self Help - Managing Your OCD at Home</div>
-            <div class="card" onclick="showPopup('https://www.webmd.com/mental-health/mental-tips-living-with-ocd?utm_source=chatgpt.com')">HelpGuide.org: Obsessive-Compulsive Disorder (OCD)</div>
-        </div>
+            <a class="card" href="https://www.mind.org.uk/information-support/types-of-mental-health-problems/obsessive-compulsive-disorder-ocd/self-care-for-ocd/?utm_source=chatgpt.com " target="_blank" rel="noopener noreferrer">Mind: Self-care for Obsessive-Compulsive Disorder (OCD)</a>
+            <a class="card" href="https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/obsessive-compulsive-disorder-ocd-self-help-guide/?utm_source=chatgpt.com " target="_blank" rel="noopener noreferrer">NHS Inform: Obsessive-Compulsive Disorder (OCD) Self-help Guide</a>
+            <a class="card" href="https://www.ocduk.org/overcoming-ocd/self-help/?utm_source=chatgpt.com " target="_blank" rel="noopener noreferrer">International OCD Foundation: Self-Directed Treatment for OCD</a>
+            <a class="card" href="https://www.helpguide.org/mental-health/anxiety/obssessive-compulsive-disorder-ocd?utm_source=chatgpt.com " target="_blank" rel="noopener noreferrer">Anxiety Canada: Self Help - Managing Your OCD at Home</a>
+            <a class="card" href="https://www.webmd.com/mental-health/mental-tips-living-with-ocd?utm_source=chatgpt.com " target="_blank" rel="noopener noreferrer">HelpGuide.org: Obsessive-Compulsive Disorder (OCD)</a>
+          </div>
     </section>
 
     <section class="category">
         <h2>For Dyslexia</h2>
-        <div class="cards">
+        <!-- <div class="cards">
             <div class="card" onclick="showPopup('https://www.mayoclinic.org/diseases-conditions/dyslexia/symptoms-causes/syc-20353552')">Mayo Clinic: Understanding Dyslexia - Symptoms and Causes</div>
             <div class="card" onclick="showPopup('https://dyslexiaida.org/dyslexia-basics/')">International Dyslexia Association: Dyslexia Basics</div>
             <div class="card" onclick="showPopup('https://www.understood.org/en/learning-thinking-differences/child-learning-disabilities/dyslexia/understanding-dyslexia')">Understood.org: What is Dyslexia?</div>
             <div class="card" onclick="showPopup('https://www.readingrockets.org/topics/dyslexia/articles/helping-kids-dyslexia')">Reading Rockets: Helping Kids with Dyslexia</div>
             <div class="card" onclick="showPopup('https://www.webmd.com/children/understanding-dyslexia-basics')">WebMD: Understanding Dyslexia - Basics and Support</div>
-        </div>
+        </div> -->
+        <div class="cards">
+            <a class="card" href="https://www.mayoclinic.org/diseases-conditions/dyslexia/symptoms-causes/syc-20353552 " target="_blank" rel="noopener noreferrer">Mayo Clinic: Understanding Dyslexia - Symptoms and Causes</a>
+            <a class="card" href="https://dyslexiaida.org/dyslexia-basics/ " target="_blank" rel="noopener noreferrer">International Dyslexia Association: Dyslexia Basics</a>
+            <a class="card" href="https://www.understood.org/en/learning-thinking-differences/child-learning-disabilities/dyslexia/understanding-dyslexia " target="_blank" rel="noopener noreferrer">Understood.org: What is Dyslexia?</a>
+            <a class="card" href="https://www.readingrockets.org/topics/dyslexia/articles/helping-kids-dyslexia " target="_blank" rel="noopener noreferrer">Reading Rockets: Helping Kids with Dyslexia</a>
+            <a class="card" href="https://www.webmd.com/children/understanding-dyslexia-basics " target="_blank" rel="noopener noreferrer">WebMD: Understanding Dyslexia - Basics and Support</a>
+          </div>
     </section>
 
     <section class="category">
         <h2>For Anxiety</h2>
-        <div class="cards">
+        <!-- <div class="cards">
             <div class="card" onclick="showPopup('https://www.helpguide.org/articles/anxiety/how-to-cope-with-anxiety.htm')">HelpGuide: How to Cope with Anxiety</div>
             <div class="card" onclick="showPopup('https://adaa.org/understanding-anxiety/self-help')">ADAA: Self-Help for Anxiety Disorders</div>
             <div class="card" onclick="showPopup('https://www.calm.com/blog/anxiety-playlist')">Calm: Anxiety-Busting Playlist Curated by Science</div>
             <div class="card" onclick="showPopup('https://www.7cups.com/anxiety-help/')">7 Cups: Chat with a Listener Who Gets It</div>
             <div class="card" onclick="showPopup('https://www.npr.org/sections/health-shots/2021/11/10/1054010348/awe-appears-to-be-awfully-beneficial')">NPR: The Science of Awe to Melt Anxiety</div>
-        </div>
+        </div> -->
+        <div class="cards">
+            <a class="card" href="https://www.helpguide.org/articles/anxiety/how-to-cope-with-anxiety.htm " target="_blank" rel="noopener noreferrer">HelpGuide: How to Cope with Anxiety</a>
+            <a class="card" href="https://adaa.org/understanding-anxiety/self-help " target="_blank" rel="noopener noreferrer">ADAA: Self-Help for Anxiety Disorders</a>
+            <a class="card" href="https://www.calm.com/blog/anxiety-playlist " target="_blank" rel="noopener noreferrer">Calm: Anxiety-Busting Playlist Curated by Science</a>
+            <a class="card" href="https://www.7cups.com/anxiety-help/ " target="_blank" rel="noopener noreferrer">7 Cups: Chat with a Listener Who Gets It</a>
+            <a class="card" href="https://www.npr.org/sections/health-shots/2021/11/10/1054010348/awe-appears-to-be-awfully-beneficial " target="_blank" rel="noopener noreferrer">NPR: The Science of Awe to Melt Anxiety</a>
+          </div>
     </section>
     <section class="category">
         <h2>For ADHD</h2>
-        <div class="cards">
+        <!-- <div class="cards">
             <div class="card" onclick="showPopup('https://chadd.org/about-adhd/overview/')">CHADD: Overview of ADHD</div>
             <div class="card" onclick="showPopup('https://www.additudemag.com/adhd-treatment-options-care/')">ADDitude: ADHD Treatment Options</div>
-            <!-- Creative Cards -->
             <div class="card" onclick="showPopup('https://www.howtoadhd.com/')">How to ADHD: Brain Hacks from a YouTube Guru</div>
             <div class="card" onclick="showPopup('https://www.adhdrewired.com/podcast/')">ADHD Rewired: Podcast for the ADHD Tribe</div>
             <div class="card" onclick="showPopup('https://totallyadd.com/adhd-comics/')">TotallyADD: Comics That Get Your ADHD Life</div>
-        </div>
+        </div> -->
+        <div class="cards">
+            <a class="card" href="https://chadd.org/about-adhd/overview/ " target="_blank" rel="noopener noreferrer">CHADD: Overview of ADHD</a>
+            <a class="card" href="https://www.additudemag.com/adhd-treatment-options-care/ " target="_blank" rel="noopener noreferrer">ADDitude: ADHD Treatment Options</a>
+            <!-- Creative Cards -->
+            <a class="card" href="https://www.howtoadhd.com/ " target="_blank" rel="noopener noreferrer">How to ADHD: Brain Hacks from a YouTube Guru</a>
+            <a class="card" href="https://www.adhdrewired.com/podcast/ " target="_blank" rel="noopener noreferrer">ADHD Rewired: Podcast for the ADHD Tribe</a>
+            <a class="card" href="https://totallyadd.com/adhd-comics/ " target="_blank" rel="noopener noreferrer">TotallyADD: Comics That Get Your ADHD Life</a>
+          </div>
     </section>
 
   <section class="category">
     <h2>For Depression</h2>
-    <div class="cards">
+    <!-- <div class="cards">
         <div class="card" onclick="showPopup('https://www.helpguide.org/articles/depression/coping-with-depression.htm')">HelpGuide: Coping with Depression</div>
         <div class="card" onclick="showPopup('https://www.mind.org.uk/information-support/types-of-mental-health-problems/depression/self-care/')">Mind: Self-Care for Depression</div>
-        <!-- Creative Cards -->
         <div class="card" onclick="showPopup('https://www.blurtitout.org/resource/depression-comics/')">Blurt: Depression Comics to Feel Seen</div>
         <div class="card" onclick="showPopup('https://www.ted.com/playlists/270/talks_to_watch_when_you_feel_depressed')">TED: Talks to Lift You Out of the Dark</div>
         <div class="card" onclick="showPopup('https://www.thedepressionproject.com/')">The Depression Project: Real Stories, Real Tools</div>
-    </div>
+    </div> -->
+    <div class="cards">
+        <a class="card" href="https://www.helpguide.org/articles/depression/coping-with-depression.htm " target="_blank" rel="noopener noreferrer">HelpGuide: Coping with Depression</a>
+        <a class="card" href="https://www.mind.org.uk/information-support/types-of-mental-health-problems/depression/self-care/ " target="_blank" rel="noopener noreferrer">Mind: Self-Care for Depression</a>
+        <a class="card" href="https://www.blurtitout.org/resource/depression-comics/ " target="_blank" rel="noopener noreferrer">Blurt: Depression Comics to Feel Seen</a>
+        <a class="card" href="https://www.ted.com/playlists/270/talks_to_watch_when_you_feel_depressed " target="_blank" rel="noopener noreferrer">TED: Talks to Lift You Out of the Dark</a>
+        <a class="card" href="https://www.thedepressionproject.com/ " target="_blank" rel="noopener noreferrer">The Depression Project: Real Stories, Real Tools</a>
+      </div>
 </section>
 
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <p id="popup-text"></p>
-            <button class="close-btn" onclick="hidePopup()">Close</button>
-        </div>
+<!-- Chatbot Toggle Button -->
+<button id="chatbot-btn">💬</button>
+    <!-- Chat Popup Structure -->
+<div id="chat-popup">
+    <div id="chat-header">AI Chatbot</div>
+    <div id="chat-body"></div>
+    <div id="chat-input">
+      <input type="text" id="user-input" placeholder="Type a message..." />
+      <button onclick="sendMessage()">➤</button>
     </div>
+  </div>
+  
+  <script>
+    
+      // Chatbot Functionality
+      const chatbotBtn = document.getElementById('chatbot-btn');
+      const chatPopup = document.getElementById('chat-popup');
+      const chatBody = document.getElementById('chat-body');
+      const userInput = document.getElementById('user-input');
+    
 
-    <script>
-        function showPopup(text) {
-            document.getElementById('popup-text').innerText = text;
-            document.getElementById('popup').style.display = 'flex';
-        }
+      chatbotBtn.addEventListener('click', () => {
+        chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+      });
+    
 
-        function hidePopup() {
-            document.getElementById('popup').style.display = 'none';
+      
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+        
+        appendMessage('user', message);
+        userInput.value = '';
+        
+        // Create bot message with loading animation
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot typing';
+        const dots = document.createElement('span');
+        dots.textContent = '';
+        botMsg.appendChild(dots);
+        chatBody.appendChild(botMsg);
+        animateDots(dots);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        try {
+          const response = await fetch('http://localhost:5000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+          });
+          
+          const data = await response.json();
+          
+          if (data.response) {
+            // Stop loading animation
+            botMsg.classList.remove('typing');
+            botMsg.textContent = '';
+            await typeEffect(botMsg, data.response);
+          } else {
+            botMsg.textContent = "Sorry, I couldn't understand that.";
+          }
+        } catch (error) {
+          botMsg.textContent = "Error connecting to chatbot.";
         }
-    </script>
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    
+      function appendMessage(sender, text) {
+        const msg = document.createElement('div');
+        msg.className = `message ${sender}`;
+        msg.textContent = text;
+        chatBody.appendChild(msg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    
+      async function typeEffect(element, text, speed = 20) {
+        for (let i = 0; i < text.length; i++) {
+          element.textContent += text.charAt(i);
+          await new Promise(resolve => setTimeout(resolve, speed));
+        }
+      }
+    
+      function animateDots(element) {
+        let count = 0;
+        const interval = setInterval(() => {
+          if (!element.parentElement.classList.contains('typing')) {
+            clearInterval(interval);
+            return;
+          }
+          element.textContent = '.'.repeat((count % 3) + 1);
+          count++;
+        }, 500);
+      }
+    
+      window.addEventListener('click', (e) => {
+    if (e.target === chatPopup) {
+      chatPopup.style.display = 'none';
+    }
+  });
+
+      userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+  </script>
 </body>
 </html>

@@ -1,0 +1,498 @@
+<!-- <style>
+    .theater-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #1a1a1a;
+        min-height: 100vh;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .video-card {
+        background: #2a2a2a;
+        border-radius: 12px;
+        margin: 2rem 0;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+        overflow: hidden;
+    }
+
+    .video-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .video-title {
+        color: #fff;
+        padding: 1.5rem;
+        margin: 0;
+        font-size: 1.4rem;
+        background: linear-gradient(45deg, #3a3a3a, #2a2a2a);
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-top: 56.25%; /* 16:9 aspect ratio */
+    }
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* Optional: Add ambient light effect */
+    .video-card::after {
+        content: '';
+        position: absolute;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 40px;
+        background: radial-gradient(rgba(255,255,255,0.1), transparent 70%);
+        filter: blur(20px);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .video-card:hover::after {
+        opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+        .theater-container {
+            padding: 1rem;
+        }
+        
+        .video-card {
+            margin: 1rem 0;
+        }
+    }
+</style>
+
+<div class="theater-container">
+    {% for video in videos %}
+    <div class="video-card">
+        <h4 class="video-title">{{ video.title }}</h4>
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/{{ video.video_id }}" 
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+ -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <style>
+    .theater-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: linear-gradient(45deg, #0a0a0a, #1a1a1a);
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .video-card {
+        background: #1b1b1b;
+        border-radius: 18px;
+        margin: 2.5rem 0;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        transition: all 0.4s ease;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.05);
+        position: relative;
+        backdrop-filter: blur(4px);
+    }
+
+    .video-card:hover {
+        transform: translateY(-8px) scale(1.01);
+        box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+        border-color: rgba(255,255,255,0.15);
+    }
+
+    .video-title {
+        color: #ffffff;
+        padding: 1.8rem 2rem;
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        position: relative;
+    }
+
+    .video-title::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #ff4754, #ff6b6b);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+
+    .video-card:hover .video-title::before {
+        transform: scaleX(1);
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-top: 56.25%;
+        background: #000;
+    }
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 0 0 18px 18px;
+    }
+
+    .video-wrapper::after {
+        /* content: '▶'; */
+        font-size: 4rem;
+        color: rgba(255,255,255,0.6);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+    }
+
+    .video-card:hover .video-wrapper::after {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .video-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+        background-size: 4px 4px;
+        pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+        .theater-container {
+            padding: 1.5rem;
+        }
+
+        .video-card {
+            margin: 2rem 0;
+            border-radius: 14px;
+        }
+
+        .video-title {
+            padding: 1.3rem 1.6rem;
+            font-size: 1.3rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .theater-container {
+            padding: 1rem;
+        }
+    }
+
+    .title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, white, #cccccc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+    /* Header styles */
+    .header {
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .description {
+            color: #888;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #ff4754, #ff6b6b);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+    background: linear-gradient(135deg, #ff6b6b, #ff4754);
+    transform: scale(1.05);
+}
+/* Chatbot Styles */
+#chatbot-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+#chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+#chat-header {
+  background: #4A90E2;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+  background: #f5f5f5;
+}
+
+#chat-input {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+#chat-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+#chat-input button {
+  background: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  line-height: 1.4;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+.user {
+  background: #e3e3e3;
+  color: #333;
+  border-radius: 15px 4px 15px 15px;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #d7eefc;
+  color: #4A90E2;
+  border-radius: 4px 15px 15px 15px;
+  align-self: flex-start;
+}
+
+.typing {
+  font-style: italic;
+  color: #888;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+
+</style>
+<a href="/inder" class="home-button">Home</a>
+
+<div class="theater-container">
+
+    <header class="header">
+        <h1 class="title">Zen Theater</h1>
+        <p class="description">A curated collection of fascinating videos with an enhanced viewing experience</p>
+    </header>
+
+    {% for video in videos %}
+    <div class="video-card">
+        <h4 class="video-title">{{ video.title }}</h4>
+        <div class="video-wrapper">
+            <iframe 
+                src="https://www.youtube.com/embed/{{ video.video_id }}" 
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+                loading="lazy"></iframe>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<button id="chatbot-btn">💬</button>
+
+<!-- Chat Popup Structure -->
+<div id="chat-popup">
+  <div id="chat-header">AI Chatbot</div>
+  <div id="chat-body"></div>
+  <div id="chat-input">
+    <input type="text" id="user-input" placeholder="Type a message..." />
+    <button onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+    // Chatbot Functionality
+    const chatbotBtn = document.getElementById('chatbot-btn');
+    const chatPopup = document.getElementById('chat-popup');
+    const chatBody = document.getElementById('chat-body');
+    const userInput = document.getElementById('user-input');
+  
+    chatbotBtn.addEventListener('click', () => {
+      chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+    });
+  
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+      
+      appendMessage('user', message);
+      userInput.value = '';
+      
+      // Create bot message with loading animation
+      const botMsg = document.createElement('div');
+      botMsg.className = 'message bot typing';
+      const dots = document.createElement('span');
+      dots.textContent = '';
+      botMsg.appendChild(dots);
+      chatBody.appendChild(botMsg);
+      animateDots(dots);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      
+      try {
+        const response = await fetch('http://localhost:5000/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+        
+        const data = await response.json();
+        
+        if (data.response) {
+          // Stop loading animation
+          botMsg.classList.remove('typing');
+          botMsg.textContent = '';
+          await typeEffect(botMsg, data.response);
+        } else {
+          botMsg.textContent = "Sorry, I couldn't understand that.";
+        }
+      } catch (error) {
+        botMsg.textContent = "Error connecting to chatbot.";
+      }
+      
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  
+    function appendMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = text;
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  
+    async function typeEffect(element, text, speed = 20) {
+      for (let i = 0; i < text.length; i++) {
+        element.textContent += text.charAt(i);
+        await new Promise(resolve => setTimeout(resolve, speed));
+      }
+    }
+  
+    function animateDots(element) {
+      let count = 0;
+      const interval = setInterval(() => {
+        if (!element.parentElement.classList.contains('typing')) {
+          clearInterval(interval);
+          return;
+        }
+        element.textContent = '.'.repeat((count % 3) + 1);
+        count++;
+      }, 500);
+    }
+  
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+</script>

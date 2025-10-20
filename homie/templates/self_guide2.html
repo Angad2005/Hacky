@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Common Problems We Solve</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    h2 span {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    .subheading {
+      margin-top: 10px;
+      margin-bottom: 30px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .tag {
+      background: #ff5722;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-weight: 500;
+      box-shadow: 0 4px 10px rgba(255, 87, 34, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .tag:hover {
+      transform: scale(1.05);
+    }
+
+    .footer-note {
+      margin-top: 40px;
+      font-size: 15px;
+      font-style: italic;
+      color: #d32f2f;
+      position: relative;
+    }
+
+    .footer-note::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #d32f2f;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    /* .grid a {
+  text-decoration: none;
+  color: inherit;
+} */
+ .home-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000; /* Ensure it stays above other content */
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #e64a19;
+}
+  </style>
+</head>
+<body>
+
+<a href="/inder" class="home-button" target="_self" rel="noopener noreferrer">
+  Home
+</a>
+
+  <div class="container">
+    <h2>We deal with common, everyday problems<br><span>in a totally different way!</span></h2>
+    <p class="subheading">The problems/requirements may be as simple as:</p>
+
+    <a href="https://ultimatebrain.in/stress/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">Stress</div>
+  </a>
+  <a href="https://ultimatebrain.in/anxiety/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">Anxiety</div>
+  </a>
+  <a href="https://ultimatebrain.in/depression/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">Depression</div><br>
+  </a>
+  <a href="https://ultimatebrain.in/anger-management-treatment/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">Anger</div><br>
+  </a>
+  <!--
+  <a href="https://example.com/autism " target="_blank" rel="noopener noreferrer">
+    <div class="tag">Autism</div>
+  </a>
+  <a href="https://example.com/dementia " target="_blank" rel="noopener noreferrer">
+    <div class="tag">Dementia</div>
+  </a>
+  -->
+  <a href="https://example.com/adhd " target="_blank" rel="noopener noreferrer">
+    <div class="tag">ADHD</div><br>
+  </a>
+  <a href="https://ultimatebrain.in/can-ocd-be-cured/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">OCD</div><br>
+  </a>
+  <a href="https://ultimatebrain.in/dementia-can-be-cured/" target="_blank" rel="noopener noreferrer">
+    <div class="tag">Dementia</div><br>
+  </a>
+      <!-- <div class="tag">Bipolar Disorder</div>
+      <div class="tag">Eating disorders</div>
+      <div class="tag">Migraine</div>
+      <div class="tag">Chronic Pains</div>
+      <div class="tag">Stroke Recovery</div>
+      <div class="tag">Learning</div>
+      <div class="tag">Emotional issues</div>
+      <div class="tag">Panic Attacks</div>
+      <div class="tag">Fatigue</div>
+      <div class="tag">Burn-out</div>
+      <div class="tag">Uncontrolled thoughts</div>
+      <div class="tag">Addictions</div>
+      <div class="tag">Alcohol</div>
+      <div class="tag">Smoking</div>
+      <div class="tag">Drugs</div>
+      <div class="tag">Attention</div>
+      <div class="tag">Focus</div>
+      <div class="tag">Motivation</div>
+      <div class="tag">Traumatic Brain Injury</div>
+      <div class="tag">Issues with Behavior</div>
+      <div class="tag">Personality</div>
+      <div class="tag">Sleep</div>
+      <div class="tag">Memory</div>
+      <div class="tag">Irritable Bowel Syndrome</div>
+      <div class="tag">M-OS – Mind Operating System</div>
+      <div class="tag">Craving</div>
+      <div class="tag">Self-awareness & analysis, etc.</div> -->
+    </div>
+
+    <p class="footer-note">The list is endless.</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script>
+    gsap.from(".tag", {
+      opacity: 0,
+      y: 30,
+      stagger: 0.05,
+      duration: 0.6,
+      ease: "power2.out"
+    });
+  </script>
+</body>
+</html>

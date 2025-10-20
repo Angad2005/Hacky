@@ -44,9 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'homie',
     'users',
+    'player'
     
 ]
-
+YOUTUBE_API_KEY = 'AIzaSyClG8v5KXR-2I_sm4entWSAc_7IPXhQ_QE'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

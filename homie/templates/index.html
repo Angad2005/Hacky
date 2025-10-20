@@ -139,95 +139,109 @@
                 background-position-x: 1200px;
             }
         }
-        #chatbot-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #4A90E2;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    z-index: 9999;
-  }
+        /* Chatbot Styles */
+#chatbot-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4A90E2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
 
-  #chat-popup {
-    display: none;
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 300px;
-    height: 400px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    z-index: 9999;
-    flex-direction: column;
-    overflow: hidden;
-  }
+#chat-popup {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
 
-  #chat-header {
-    background: #4A90E2;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-  }
+#chat-header {
+  background: #4A90E2;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
 
-  #chat-body {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    font-size: 14px;
-  }
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 14px;
+  background: #f5f5f5;
+}
 
-  #chat-input {
-    display: flex;
-    border-top: 1px solid #ccc;
-  }
+#chat-input {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
 
-  #chat-input input {
-    flex: 1;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    outline: none;
-  }
+#chat-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
 
-  #chat-input button {
-    background: #4A90E2;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-  }
-  .typing {
+#chat-input button {
+  background: #4A90E2;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.message {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 15px;
+  max-width: 80%;
+  line-height: 1.4;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+}
+
+.user {
+  background: #e3e3e3;
+  color: #333;
+  border-radius: 15px 4px 15px 15px;
+  align-self: flex-end;
+}
+
+.bot {
+  background: #d7eefc;
+  color: #4A90E2;
+  border-radius: 4px 15px 15px 15px;
+  align-self: flex-start;
+}
+
+.typing {
   font-style: italic;
   color: #888;
-  font-size: 18px;  /* ⬅️ Increased font size */
+  font-size: 18px;
   font-weight: bold;
   letter-spacing: 2px;
 }
-
-
-  .message {
-    margin: 5px 0;
-  }
-
-  .user {
-    text-align: right;
-    color: #333;
-  }
-
-  .bot {
-    text-align: left;
-    color: #4A90E2;
-  }
     </style>
 </head>
 <body class="font-sans">
@@ -236,13 +250,19 @@
         <header class="header fixed w-full z-50 py-4 px-6 md:px-12 flex justify-between items-center">
             <div class="logo text-2xl font-bold text-white transition-transform">Mindrtic</div>
             <nav class="hidden md:block">
-                <ul class="flex space-x-8">
+                <!-- <ul class="flex space-x-8">
                     <li><a href="#" class="text-white hover:text-blue-200 transition">Home</a></li>
-                    <li><a href="{% url 'Music' %}" class="text-white hover:text-blue-200 transition">Music</a></li>
+                    <li><a href="{% url 'player' %}" class="text-white hover:text-blue-200 transition">Zen Theater</a></li>
                     <li><a href="{% url 'games_index' %}" class="text-white hover:text-blue-200 transition">Games</a></li>
                     <li><a href="{% url 'Book' %}" class="text-white hover:text-blue-200 transition">Library</a></li>
-                    <li><a href="{% url 'Self' %}" class="text-white hover:text-blue-200 transition">Article</a></li>
-                    <li><form method="post" action="{% url 'logout' %}">
+                    <li><a href="{% url 'Self' %}" class="text-white hover:text-blue-200 transition">Article</a></li> -->
+                    <!-- <ul class="flex space-x-8 bg-gray-900 px-6 py-4 rounded-lg shadow-xl">
+                        <li><a href="#" class="text-white bg-blue-800 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-colors duration-300 font-medium">Home</a></li>
+                        <li><a href="{% url 'player' %}" class="text-white bg-purple-700 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white transition-colors duration-300 font-medium">Zen Theater</a></li>
+                        <li><a href="{% url 'games_index' %}" class="text-white bg-green-700 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-300 font-medium">Games</a></li>
+                        <li><a href="{% url 'Book' %}" class="text-white bg-red-700 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-colors duration-300 font-medium">Library</a></li>
+                        <li><a href="{% url 'Self' %}" class="text-white bg-orange-600 px-4 py-2 rounded-lg hover:bg-orange-500 hover:text-white transition-colors duration-300 font-medium">Article</a></li>
+                        <li><form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-light" style="
                         color: white;
@@ -259,6 +279,21 @@
                     </form>
                         
                       </li>
+                </ul> -->
+                <ul class="flex space-x-8 bg-gray-900 px-6 py-4 rounded-lg shadow-xl">
+                    <li><a href="#" class="text-white bg-blue-800 px-4 py-2 rounded-lg hover:bg-blue-700 hover:text-white transition-colors duration-300 font-medium">Home</a></li>
+                    <li><a href="{% url 'player' %}" class="text-white bg-purple-700 px-4 py-2 rounded-lg hover:bg-purple-600 hover:text-white transition-colors duration-300 font-medium">Zen Theater</a></li>
+                    <li><a href="{% url 'Book' %}" class="text-white bg-red-700 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition-colors duration-300 font-medium">Hey, Buddy</a></li>
+                    <li><a href="{% url 'games_index' %}" class="text-white bg-green-700 px-4 py-2 rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-300 font-medium">Games</a></li>
+                    <li><a href="{% url 'Self' %}" class="text-white bg-orange-600 px-4 py-2 rounded-lg hover:bg-orange-500 hover:text-white transition-colors duration-300 font-medium">Guide & Facts</a></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="text-white bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600 hover:text-white transition-colors duration-300 font-medium">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </nav>
             <button class="md:hidden text-white text-2xl">
@@ -318,18 +353,20 @@
                         <!-- Feature 1 -->
                         <a href="{% url 'Self' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
                             <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 mx-auto">
-                                <i class="fas fa-water text-2xl"></i>
+                                <!-- <i class="fas fa-water text-2xl"></i> -->
+                                <i class="fas fa-book text-2xl"></i>
                             </div>
                             <h4 class="text-xl font-semibold text-center mb-3">Guides</h4>
                            
                         </div></a>
                         
                         <!-- Feature 2 -->
-                        <a href="{% url 'Music' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
+                        <a href="{% url 'player' %}"><div class="bg-white p-8 rounded-xl shadow-md hover:shadow-xl transition duration-500 transform hover:-translate-y-2">
                             <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-4 mx-auto">
-                                <i class="fas fa-wind text-2xl"></i>
+                                <!-- <i class="fas fa-wind text-2xl"></i> -->
+                                <i class="fas fa-theater-masks text-2xl"></i>
                             </div>
-                            <h4 class="text-xl font-semibold text-center mb-3">Music</h4>
+                            <h4 class="text-xl font-semibold text-center mb-3">ZenTheater</h4>
                           
                         </div></a>
                         
@@ -347,15 +384,99 @@
 
             <button id="chatbot-btn">💬</button>
 
-            <!-- Chat Popup -->
-            <div id="chat-popup">
-              <div id="chat-header">AI Chatbot</div>
-              <div id="chat-body"></div>
-              <div id="chat-input">
-                <input type="text" id="user-input" placeholder="Type a message..." />
-                <button onclick="sendMessage()">➤</button>
-              </div>
-            </div>  
+            <!-- Chat Popup Structure -->
+<div id="chat-popup">
+    <div id="chat-header">AI Chatbot</div>
+    <div id="chat-body"></div>
+    <div id="chat-input">
+      <input type="text" id="user-input" placeholder="Type a message..." />
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+  
+  <script>
+      // Chatbot Functionality
+      const chatbotBtn = document.getElementById('chatbot-btn');
+      const chatPopup = document.getElementById('chat-popup');
+      const chatBody = document.getElementById('chat-body');
+      const userInput = document.getElementById('user-input');
+    
+      chatbotBtn.addEventListener('click', () => {
+        chatPopup.style.display = chatPopup.style.display === 'none' ? 'flex' : 'none';
+      });
+    
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+        
+        appendMessage('user', message);
+        userInput.value = '';
+        
+        // Create bot message with loading animation
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot typing';
+        const dots = document.createElement('span');
+        dots.textContent = '';
+        botMsg.appendChild(dots);
+        chatBody.appendChild(botMsg);
+        animateDots(dots);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        try {
+          const response = await fetch('http://localhost:5000/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+          });
+          
+          const data = await response.json();
+          
+          if (data.response) {
+            // Stop loading animation
+            botMsg.classList.remove('typing');
+            botMsg.textContent = '';
+            await typeEffect(botMsg, data.response);
+          } else {
+            botMsg.textContent = "Sorry, I couldn't understand that.";
+          }
+        } catch (error) {
+          botMsg.textContent = "Error connecting to chatbot.";
+        }
+        
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    
+      function appendMessage(sender, text) {
+        const msg = document.createElement('div');
+        msg.className = `message ${sender}`;
+        msg.textContent = text;
+        chatBody.appendChild(msg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    
+      async function typeEffect(element, text, speed = 20) {
+        for (let i = 0; i < text.length; i++) {
+          element.textContent += text.charAt(i);
+          await new Promise(resolve => setTimeout(resolve, speed));
+        }
+      }
+    
+      function animateDots(element) {
+        let count = 0;
+        const interval = setInterval(() => {
+          if (!element.parentElement.classList.contains('typing')) {
+            clearInterval(interval);
+            return;
+          }
+          element.textContent = '.'.repeat((count % 3) + 1);
+          count++;
+        }, 500);
+      }
+    
+      userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+  </script>  
                
              
 
@@ -407,7 +528,7 @@
         </footer>
     </div>
 
-    <script>
+    <!-- <script>
         const chatbotBtn = document.getElementById('chatbot-btn');
         const chatPopup = document.getElementById('chat-popup');
         const chatBody = document.getElementById('chat-body');
@@ -488,7 +609,7 @@
         userInput.addEventListener('keypress', (e) => {
           if (e.key === 'Enter') sendMessage();
         });
-      </script>
+      </script> -->
       
 
     <script>
